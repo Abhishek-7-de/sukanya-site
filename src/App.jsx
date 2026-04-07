@@ -1,9 +1,9 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import "./App.css";
 
 /* ═══════════════════════════════════════════════
-   SOUND ENGINE (Web Audio API — no files needed)
+   SOUND ENGINE
 ═══════════════════════════════════════════════ */
 function playSound(type) {
   try {
@@ -56,6 +56,52 @@ function playSound(type) {
 }
 
 /* ═══════════════════════════════════════════════
+   OPENING LETTER POPUP
+═══════════════════════════════════════════════ */
+function OpeningLetter({ onClose }) {
+  return (
+    <AnimatePresence>
+      <motion.div
+        className="letter-overlay"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        onClick={onClose}
+      >
+        <motion.div
+          className="letter-modal"
+          initial={{ opacity: 0, y: 60, scale: 0.92 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: 40, scale: 0.95 }}
+          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+          onClick={e => e.stopPropagation()}
+        >
+          <div className="letter-top-deco">✉️</div>
+          <p className="letter-text">
+            Hey — Ik it's kinda cliche but well, I am like that.
+          </p>
+          <p className="letter-text">
+            Sorry if you find this creepy but that wasn't my intention at all..
+          </p>
+          <p className="letter-text">
+            You'll be leaving the city in a month and probably we'll stay in touch but you know, maybe not so much — we'll have our own different lives to carry on.
+          </p>
+          <p className="letter-text">
+            So this will be a small memory whenever we look back. And well, maybe not everyone comes into your life to stay — but definitely, as long as they are there, they make life feel like living and being happy.
+          </p>
+          <p className="letter-text" style={{ fontStyle: "italic", opacity: 0.75 }}>
+            So ya !! 🌸
+          </p>
+          <button className="letter-close-btn" onClick={() => { playSound("click"); onClose(); }}>
+            Step inside ✨
+          </button>
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
+  );
+}
+
+/* ═══════════════════════════════════════════════
    SPOTIFY WIDGET
 ═══════════════════════════════════════════════ */
 function SpotifyWidget({ trackId }) {
@@ -81,7 +127,7 @@ function VolumeToast() {
   useEffect(() => {
     if (localStorage.getItem("vol-shown")) return;
     const t1 = setTimeout(() => { setVisible(true); playSound("open"); }, 800);
-    const t2 = setTimeout(() => { setVisible(false); localStorage.setItem("vol-shown","1"); }, 4500);
+    const t2 = setTimeout(() => { setVisible(false); localStorage.setItem("vol-shown", "1"); }, 4500);
     return () => { clearTimeout(t1); clearTimeout(t2); };
   }, []);
   if (!visible) return null;
@@ -106,9 +152,9 @@ function GlobalSOS() {
 }
 
 /* ═══════════════════════════════════════════════
-   OMNIPRESENT SLAM BOOK SIDEBAR
+   SLAM SIDEBAR
 ═══════════════════════════════════════════════ */
-const SIDEBAR_MOODS = ["💫","🌊","🔥","🌙","💕","⚡"];
+const SIDEBAR_MOODS = ["💫", "🌊", "🔥", "🌙", "💕", "⚡"];
 function SlamSidebar() {
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
@@ -133,23 +179,23 @@ function SlamSidebar() {
         {open && (
           <motion.div className="slam-sidebar-panel"
             initial={{ x: 320 }} animate={{ x: 0 }} exit={{ x: 320 }}
-            transition={{ duration: 0.4, ease: [0.16,1,0.3,1] }}
+            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
           >
             {done ? (
               <div className="sidebar-success">
                 <div className="sidebar-success-icon">🌟</div>
-                <p style={{ color: "var(--cosmic-text-soft)", marginTop:"0.5rem" }}>Your note is in the cosmos!</p>
+                <p style={{ color: "var(--cosmic-text-soft)", marginTop: "0.5rem" }}>Your note is in the cosmos!</p>
               </div>
             ) : (
               <form onSubmit={submit}>
                 <h3>✨ Leave a Note</h3>
                 <p>Tell her something she deserves to hear.</p>
-                <input className="sidebar-form-input" placeholder="Your name" value={name} onChange={e=>setName(e.target.value)} required />
-                <textarea className="sidebar-form-input" placeholder="Your message..." value={msg} onChange={e=>setMsg(e.target.value)} rows={3} required style={{ resize:"none" }} />
+                <input className="sidebar-form-input" placeholder="Your name" value={name} onChange={e => setName(e.target.value)} required />
+                <textarea className="sidebar-form-input" placeholder="Your message..." value={msg} onChange={e => setMsg(e.target.value)} rows={3} required style={{ resize: "none" }} />
                 <div className="sidebar-mood-row">
                   {SIDEBAR_MOODS.map(m => (
                     <button key={m} type="button"
-                      className={`sidebar-mood-btn${mood===m?" active":""}`}
+                      className={`sidebar-mood-btn${mood === m ? " active" : ""}`}
                       onClick={() => setMood(m)}
                     >{m}</button>
                   ))}
@@ -162,7 +208,7 @@ function SlamSidebar() {
           </motion.div>
         )}
       </AnimatePresence>
-      <div className="slam-sidebar-tab" onClick={() => { setOpen(o=>!o); playSound("click"); }}>
+      <div className="slam-sidebar-tab" onClick={() => { setOpen(o => !o); playSound("click"); }}>
         {open ? "✕ Close" : "✨ Leave a Note"}
       </div>
     </div>
@@ -200,14 +246,14 @@ function PersonalNotepad() {
   return (
     <>
       <button className="notepad-toggle" title="Your personal notepad 📓"
-        onClick={() => { setOpen(o=>!o); playSound("click"); }}
+        onClick={() => { setOpen(o => !o); playSound("click"); }}
       >📓</button>
       <AnimatePresence>
         {open && (
           <motion.div className="notepad-panel"
-            initial={{ opacity:0, y:20, scale:0.95 }} animate={{ opacity:1, y:0, scale:1 }}
-            exit={{ opacity:0, y:20, scale:0.95 }}
-            transition={{ duration: 0.3, ease:[0.16,1,0.3,1] }}
+            initial={{ opacity: 0, y: 20, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 20, scale: 0.95 }}
+            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
           >
             <div className="notepad-header">
               <h4>📓 My Thoughts</h4>
@@ -262,7 +308,7 @@ function CursorTrail({ color }) {
     <>
       {Array.from({ length: NUM }).map((_, i) => (
         <div key={i} ref={el => (dots.current[i] = el)} className="cursor-dot"
-          style={{ width: 8 - i * 0.6, height: 8 - i * 0.6, background: color, opacity: 1 - (i/NUM)*0.85 }}
+          style={{ width: 8 - i * 0.6, height: 8 - i * 0.6, background: color, opacity: 1 - (i / NUM) * 0.85 }}
         />
       ))}
     </>
@@ -287,8 +333,8 @@ function StarCanvas({ variant = "moon" }) {
       r: Math.random() * 1.8 + 0.2, alpha: Math.random(),
       speed: Math.random() * 0.004 + 0.001,
       color: variant === "cosmic"
-        ? (Math.random() > 0.7 ? `hsl(190,100%,${70+Math.random()*20}%)` : Math.random() > 0.5 ? `hsl(45,100%,${65+Math.random()*20}%)` : "#fff")
-        : `hsl(${240+Math.random()*60},80%,${80+Math.random()*15}%)`,
+        ? (Math.random() > 0.7 ? `hsl(190,100%,${70 + Math.random() * 20}%)` : Math.random() > 0.5 ? `hsl(45,100%,${65 + Math.random() * 20}%)` : "#fff")
+        : `hsl(${240 + Math.random() * 60},80%,${80 + Math.random() * 15}%)`,
     }));
     let t = 0;
     const draw = () => {
@@ -324,7 +370,6 @@ function HeartbeatMonitor() {
   const [clicks, setClicks] = useState(0);
   const canvasRef = useRef(null);
   const bpmRef = useRef(68);
-  const frameRef = useRef(0);
 
   useEffect(() => { bpmRef.current = bpm; }, [bpm]);
 
@@ -362,9 +407,7 @@ function HeartbeatMonitor() {
 
   const click = () => {
     const nb = Math.min(140, bpm + 14);
-    setBpm(nb);
-    setPumping(true);
-    setClicks(c => c + 1);
+    setBpm(nb); setPumping(true); setClicks(c => c + 1);
     playSound("heart");
     setTimeout(() => setPumping(false), 300);
   };
@@ -374,7 +417,7 @@ function HeartbeatMonitor() {
   return (
     <section className="heartbeat-section content">
       <span className="section-eyebrow" style={{ color: "var(--moon-accent1)" }}>Interactive</span>
-      <h2 className="section-title" style={{ color: "var(--moon-text)", marginBottom:"2rem" }}>
+      <h2 className="section-title" style={{ color: "var(--moon-text)", marginBottom: "2rem" }}>
         What happens to my heart
       </h2>
       <div className="heart-monitor-card">
@@ -396,7 +439,7 @@ function HeartbeatMonitor() {
 }
 
 /* ═══════════════════════════════════════════════
-   FUN WATER TRACKER
+   WATER TRACKER
 ═══════════════════════════════════════════════ */
 const WATER_MSGS = [
   "hey. drink water. now.", "1 down! keep going darling 💧",
@@ -405,7 +448,7 @@ const WATER_MSGS = [
   "6 glasses omg 🌟", "7! you're basically a mermaid 🧜‍♀️",
   "ALL 8! 🎉 LEGENDARY. You actually listened!!"
 ];
-const CONFETTI_COLORS = ["#ff6b6b","#f4c2a0","#ffd700","#a855f7","#00d4ff","#ff85b3"];
+const CONFETTI_COLORS = ["#ff6b6b", "#f4c2a0", "#ffd700", "#a855f7", "#00d4ff", "#ff85b3"];
 
 function FunWaterTracker() {
   const [water, setWater] = useState(0);
@@ -415,13 +458,11 @@ function FunWaterTracker() {
 
   const fill = (i) => {
     const newVal = i < water ? i : i + 1;
-    setWater(newVal);
-    setJustFilled(i);
+    setWater(newVal); setJustFilled(i);
     playSound("water");
     setTimeout(() => setJustFilled(-1), 500);
     if (newVal === 8) {
-      setShowConfetti(true);
-      playSound("success");
+      setShowConfetti(true); playSound("success");
       setTimeout(() => setShowConfetti(false), 2500);
     }
   };
@@ -436,7 +477,7 @@ function FunWaterTracker() {
   return (
     <section className="fun-tracker-section">
       <span className="section-eyebrow" style={{ color: "var(--blossom-coral)" }}>Water Alarm 💧</span>
-      <h2 className="section-title" style={{ color: "var(--blossom-text)", marginBottom:"1rem" }}>
+      <h2 className="section-title" style={{ color: "var(--blossom-text)", marginBottom: "1rem" }}>
         Have you had your water today?
       </h2>
       <div className="fun-tracker-card">
@@ -448,14 +489,14 @@ function FunWaterTracker() {
           </div>
         )}
         <div className="water-label-row">
-          {Array.from({length:8}).map((_,i)=>(<div key={i} className="water-label">#{i+1}</div>))}
+          {Array.from({ length: 8 }).map((_, i) => (<div key={i} className="water-label">#{i + 1}</div>))}
         </div>
         <div className="water-gauge-row">
           {Array.from({ length: 8 }).map((_, i) => (
             <button key={i}
               className={`water-glass-btn${i < water ? " filled" : ""}${justFilled === i ? " just-filled" : ""}`}
               onClick={() => fill(i)}
-              aria-label={`Glass ${i+1}`}
+              aria-label={`Glass ${i + 1}`}
             />
           ))}
         </div>
@@ -468,10 +509,521 @@ function FunWaterTracker() {
 }
 
 /* ═══════════════════════════════════════════════
-   WORLD 1 — MOONLIGHT REVERIE
+   NEUTRAL LANDING (HOME)
 ═══════════════════════════════════════════════ */
-const photos = ["/1.jpeg","/2.jpeg","/3.jpeg","/4.jpeg","/5.jpeg"];
-const photoLabels = ["Her energy","Candid gold","Just her","That look","Real one"];
+function LandingPage({ onChoose }) {
+  return (
+    <div className="w-landing world-fade-enter">
+      <StarCanvas variant="moon" />
+      <CursorTrail color="hsla(264,100%,75%,0.8)" />
+
+      <div className="landing-center">
+        <motion.div
+          className="landing-letter-deco"
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.7, delay: 0.1 }}
+        >
+          ✨
+        </motion.div>
+
+        <motion.h1
+          className="landing-title"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+        >
+          Hey, <em>Sukanya</em>.
+        </motion.h1>
+
+        <motion.p
+          className="landing-sub"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8, delay: 0.35 }}
+        >
+          Something small was made for you.<br />Where do you want to go?
+        </motion.p>
+
+        <motion.div
+          className="landing-choices"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.5 }}
+        >
+          <button
+            className="landing-choice-btn landing-choice-love"
+            onClick={() => { playSound("click"); onChoose("love"); }}
+          >
+            <span className="choice-icon">💌</span>
+            <span className="choice-label">The Personal Side</span>
+            <span className="choice-hint">A little honest, a little soft</span>
+          </button>
+
+          <button
+            className="landing-choice-btn landing-choice-friends"
+            onClick={() => { playSound("click"); onChoose("moon"); }}
+          >
+            <span className="choice-icon">🌸</span>
+            <span className="choice-label">Her World</span>
+            <span className="choice-hint">Memories, vibes &amp; her people</span>
+          </button>
+        </motion.div>
+      </div>
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════
+   LOVE PAGE — password gated
+═══════════════════════════════════════════════ */
+function LovePage({ onBack, onNavigate }) {
+  const [step, setStep] = useState("warning"); // warning | password | content
+  const [pw, setPw] = useState("");
+  const [pwError, setPwError] = useState(false);
+  const [butterfliesRevealed, setButterfliesRevealed] = useState(false);
+  const [showCompliment, setShowCompliment] = useState(null);
+
+  const COMPLIMENTS = [
+    "You make ordinary moments feel like poetry 🌸",
+    "The way you listen — it's actually rare, and you don't even know it 💫",
+    "Your words carry more weight than you think ✨",
+    "You're the kind of person people write songs about without realising they're doing it 🎵",
+    "Your gestures say more than most people's paragraphs 💌",
+    "There's something about your energy that just — stays 🌙",
+    "You're not just pretty by looks. By words. By gestures. By actions. All of it. 💕",
+  ];
+
+  const tryPassword = () => {
+    if (pw === "4412") {
+      playSound("success");
+      setStep("content");
+      setPwError(false);
+    } else {
+      setPwError(true);
+      playSound("click");
+      setTimeout(() => setPwError(false), 1200);
+    }
+  };
+
+  if (step === "warning") {
+    return (
+      <div className="love-gate world-fade-enter">
+        <StarCanvas variant="moon" />
+        <motion.div
+          className="love-warning-box"
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5 }}
+        >
+          <div className="love-warning-icon">⚠️</div>
+          <h2 className="love-warning-title">Hold on a second</h2>
+          <p className="love-warning-text">
+            This section is a little personal. It's honest and soft and maybe a tiny bit embarrassing for me.
+          </p>
+          <p className="love-warning-text" style={{ opacity: 0.7, fontSize: "0.9rem" }}>
+            No pressure. You can always go back.
+          </p>
+          <div className="love-warning-btns">
+            <button className="love-warning-proceed" onClick={() => { playSound("click"); setStep("password"); }}>
+              I'm okay with that →
+            </button>
+            <button className="love-warning-back" onClick={() => { playSound("click"); onBack(); }}>
+              ← Take me back
+            </button>
+          </div>
+        </motion.div>
+      </div>
+    );
+  }
+
+  if (step === "password") {
+    return (
+      <div className="love-gate world-fade-enter">
+        <StarCanvas variant="moon" />
+        <motion.div
+          className="love-warning-box"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <div className="love-warning-icon">🔒</div>
+          <h2 className="love-warning-title">One small thing</h2>
+          <p className="love-warning-text">
+            You know the password. It's yours. 💌
+          </p>
+          <input
+            className={`love-pw-input${pwError ? " shake" : ""}`}
+            type="password"
+            placeholder="Enter password..."
+            value={pw}
+            onChange={e => setPw(e.target.value)}
+            onKeyDown={e => e.key === "Enter" && tryPassword()}
+            maxLength={10}
+            autoFocus
+          />
+          {pwError && <p className="love-pw-error">That's not it 🌸 think again...</p>}
+          <div className="love-warning-btns">
+            <button className="love-warning-proceed" onClick={tryPassword}>
+              Enter →
+            </button>
+            <button className="love-warning-back" onClick={() => { playSound("click"); setStep("warning"); }}>
+              ← Go back
+            </button>
+          </div>
+        </motion.div>
+      </div>
+    );
+  }
+
+  // CONTENT — the actual love page
+  return (
+    <div className="w-moon world-fade-enter">
+      <CursorTrail color="hsla(350,100%,75%,0.8)" />
+      <StarCanvas variant="moon" />
+
+      <nav className="moon-nav content">
+        <div className="moon-logo">💌 For You</div>
+        <button className="back-btn" onClick={() => { playSound("click"); onBack(); }}>← Back</button>
+      </nav>
+
+      {/* BUTTERFLIES SECTION */}
+      <section className="butterflies-section content">
+        <motion.span className="section-eyebrow" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+          Something I noticed
+        </motion.span>
+        <motion.h2
+          className="section-title"
+          style={{ color: "var(--moon-text)", fontSize: "clamp(1.8rem, 4vw, 2.8rem)" }}
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+        >
+          After a long time, someone made me feel butterflies —
+        </motion.h2>
+        <motion.p
+          style={{ color: "var(--moon-text-soft)", fontSize: "1.1rem", marginBottom: "2rem" }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.25 }}
+        >
+          You know who?
+        </motion.p>
+
+        {!butterfliesRevealed ? (
+          <motion.button
+            className="btn-who"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.4 }}
+            onClick={() => { playSound("heart"); setButterfliesRevealed(true); }}
+          >
+            Who? 🦋
+          </motion.button>
+        ) : (
+          <motion.div
+            className="butterflies-reveal"
+            initial={{ opacity: 0, scale: 0.85 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <div className="butterflies-name">You. 🦋</div>
+            <p className="butterflies-pause">
+              But maybe not the right time.<br />
+              So let's just pause it right there.
+            </p>
+            <p className="butterflies-dots">. . .</p>
+          </motion.div>
+        )}
+      </section>
+
+      {/* PARALLEL UNIVERSE */}
+      <section className="parallel-section content">
+        <motion.div
+          className="parallel-card"
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7 }}
+        >
+          <p className="parallel-line">
+            Maybe in a parallel universe — we are meant to be.
+          </p>
+          <div className="parallel-photos">
+            {["/1.jpeg", "/2.jpeg", "/3.jpeg"].map((src, i) => (
+              <div key={i} className="parallel-photo-wrap">
+                <img src={src} alt="" onError={e => e.target.style.display = "none"} />
+              </div>
+            ))}
+          </div>
+        </motion.div>
+      </section>
+
+      {/* COMPLIMENTS */}
+      <section className="compliments-section content">
+        <span className="section-eyebrow" style={{ color: "var(--moon-accent1)" }}>For real though</span>
+        <h2 className="section-title" style={{ color: "var(--moon-text)", marginBottom: "0.5rem" }}>
+          Things you should hear more often
+        </h2>
+        <p style={{ color: "var(--moon-text-soft)", marginBottom: "2rem", fontSize: "0.95rem" }}>
+          Tap any to read it.
+        </p>
+        <div className="compliments-grid">
+          {COMPLIMENTS.map((c, i) => (
+            <motion.button
+              key={i}
+              className={`compliment-bubble${showCompliment === i ? " active" : ""}`}
+              onClick={() => { playSound("click"); setShowCompliment(showCompliment === i ? null : i); }}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.07 }}
+            >
+              <AnimatePresence mode="wait">
+                {showCompliment === i ? (
+                  <motion.span key="open" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                    {c}
+                  </motion.span>
+                ) : (
+                  <motion.span key="closed" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                    ✨ Tap me
+                  </motion.span>
+                )}
+              </AnimatePresence>
+            </motion.button>
+          ))}
+        </div>
+      </section>
+
+      {/* ALWAYS GOT YOUR BACK */}
+      <section className="got-your-back content">
+        <motion.div
+          className="gotback-card"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7 }}
+        >
+          <div className="gotback-icon">🫂</div>
+          <h2 className="gotback-title">You always got my back.</h2>
+          <p className="gotback-sub">
+            And for that — this whole thing, all of it, was worth making.
+          </p>
+          <a href="tel:7001684412" className="btn-sos" onClick={() => playSound("click")}>🆘 SOS: 7001684412</a>
+        </motion.div>
+      </section>
+
+      {/* NAV TO OTHER WORLDS */}
+      <div style={{ textAlign: "center", padding: "2rem", paddingBottom: "4rem" }}>
+        <button className="blossom-back-home" onClick={() => { playSound("click"); onNavigate("moon"); }}>
+          See Her World →
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════
+   GUIDE PAGE
+═══════════════════════════════════════════════ */
+function GuidePage({ onClose }) {
+  const features = [
+    { icon: "💌", title: "The Personal Side", desc: "A private space with honest feelings. You'll need the password to enter — you know it." },
+    { icon: "🌸", title: "Her World", desc: "Vibes, memories, timeline, photos and a water tracker because hydration matters." },
+    { icon: "💧", title: "Water Alarm", desc: "Track 8 glasses. Click the cups. Get judged lovingly if you don't." },
+    { icon: "🎴", title: "Tarot Vibes", desc: "A little cosmic card pull — just for fun." },
+    { icon: "🎵", title: "Playlist", desc: "Songs that match the mood of each world." },
+    { icon: "✨", title: "Slam Book", desc: "Her friends can leave messages, memories and love. Lives here forever." },
+    { icon: "📓", title: "Notepad", desc: "The little 📓 button — your own private notes. Stored only on your phone." },
+    { icon: "✉️", title: "Leave a Note", desc: "The floating sidebar — tell her something she deserves to hear." },
+    { icon: "🆘", title: "SOS", desc: "One tap call. Available anytime, no questions asked." },
+    { icon: "🎴", title: "Cosmic Dreams", desc: "A slam book world where people send her messages that float like stars." },
+  ];
+
+  return (
+    <AnimatePresence>
+      <motion.div
+        className="guide-overlay"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        onClick={onClose}
+      >
+        <motion.div
+          className="guide-modal"
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 30 }}
+          transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+          onClick={e => e.stopPropagation()}
+        >
+          <div className="guide-header">
+            <h2>✨ What's in here?</h2>
+            <p>A quick tour of everything built for you.</p>
+            <button className="guide-close" onClick={() => { playSound("click"); onClose(); }}>✕</button>
+          </div>
+          <div className="guide-grid">
+            {features.map((f, i) => (
+              <motion.div
+                key={i}
+                className="guide-item"
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.04 }}
+              >
+                <span className="guide-item-icon">{f.icon}</span>
+                <div>
+                  <div className="guide-item-title">{f.title}</div>
+                  <div className="guide-item-desc">{f.desc}</div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+          <button className="letter-close-btn" style={{ marginTop: "1.5rem" }} onClick={() => { playSound("click"); onClose(); }}>
+            Got it! ✨
+          </button>
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
+  );
+}
+
+/* ═══════════════════════════════════════════════
+   TAROT CARD
+═══════════════════════════════════════════════ */
+const TAROT_CARDS = [
+  { name: "The Star", emoji: "⭐", meaning: "Hope is not naive. It's brave. Keep going." },
+  { name: "The Moon", emoji: "🌙", meaning: "Trust your instincts. Even the unclear path is yours." },
+  { name: "The Sun", emoji: "☀️", meaning: "Good things are coming. You are the warmth." },
+  { name: "Strength", emoji: "🦁", meaning: "You're stronger than you've been giving yourself credit for." },
+  { name: "The World", emoji: "🌍", meaning: "A chapter is completing. You've grown more than you know." },
+  { name: "The Fool", emoji: "🌈", meaning: "A beautiful beginning. Trust the leap." },
+  { name: "The High Priestess", emoji: "🔮", meaning: "Your intuition knows. Listen to it quietly." },
+  { name: "Ace of Cups", emoji: "💫", meaning: "Something new and tender is opening in you." },
+];
+
+function TarotCard() {
+  const [drawn, setDrawn] = useState(null);
+  const [flipped, setFlipped] = useState(false);
+
+  const draw = () => {
+    const card = TAROT_CARDS[Math.floor(Math.random() * TAROT_CARDS.length)];
+    setDrawn(card); setFlipped(false);
+    playSound("click");
+    setTimeout(() => setFlipped(true), 200);
+  };
+
+  return (
+    <div className="tarot-wrap">
+      <span className="section-eyebrow" style={{ color: "var(--moon-accent1)" }}>🎴 Tarot Vibes</span>
+      <h3 className="tarot-heading">Pull a card for the day</h3>
+      {!drawn ? (
+        <button className="tarot-draw-btn" onClick={draw}>Draw a Card 🔮</button>
+      ) : (
+        <motion.div
+          className={`tarot-card${flipped ? " flipped" : ""}`}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+        >
+          <div className="tarot-emoji">{drawn.emoji}</div>
+          <div className="tarot-name">{drawn.name}</div>
+          <div className="tarot-meaning">{drawn.meaning}</div>
+          <button className="tarot-again" onClick={draw}>Draw again ✨</button>
+        </motion.div>
+      )}
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════
+   MINI PLAYLIST
+═══════════════════════════════════════════════ */
+const PLAYLIST = [
+  { title: "Aaj Ki Raat", artist: "AR Rahman", id: "0cYohCh24y1aMjJmcS9RBl" },
+  { title: "Tum Se Hi", artist: "Mohit Chauhan", id: "2znooFkKzDQ3mC8sWCFuG6" },
+  { title: "Iktara", artist: "Kavita Seth", id: "0cYohCh24y1aMjJmcS9RBl" },
+  { title: "Khaabon Ke Parinday", artist: "Mohit Chauhan", id: "2znooFkKzDQ3mC8sWCFuG6" },
+];
+
+function MiniPlaylist() {
+  const [open, setOpen] = useState(false);
+  const [playing, setPlaying] = useState(null);
+
+  return (
+    <div className="mini-playlist-wrap">
+      <button className="mini-playlist-toggle" onClick={() => { setOpen(o => !o); playSound("click"); }}>
+        🎵 Playlist {open ? "▲" : "▼"}
+      </button>
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            className="mini-playlist-panel"
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            {PLAYLIST.map((track, i) => (
+              <div
+                key={i}
+                className={`mini-track${playing === i ? " playing" : ""}`}
+                onClick={() => { setPlaying(i); playSound("click"); }}
+              >
+                <span className="mini-track-icon">{playing === i ? "▶" : "♪"}</span>
+                <div>
+                  <div className="mini-track-title">{track.title}</div>
+                  <div className="mini-track-artist">{track.artist}</div>
+                </div>
+              </div>
+            ))}
+            {playing !== null && (
+              <div style={{ padding: "0.5rem 0 0.3rem" }}>
+                <iframe
+                  style={{ borderRadius: "8px" }}
+                  src={`https://open.spotify.com/embed/track/${PLAYLIST[playing].id}?utm_source=generator&theme=0`}
+                  width="100%" height="80" frameBorder="0" allowFullScreen=""
+                  allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                  loading="lazy"
+                />
+              </div>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════
+   WORLD 1 — MOONLIGHT REVERIE (her friends' world)
+═══════════════════════════════════════════════ */
+const photos = ["/1.jpeg", "/2.jpeg", "/3.jpeg", "/4.jpeg", "/5.jpeg"];
+const photoLabels = ["Her energy", "Candid gold", "Just her", "That look", "Real one"];
+
+const VIBES = [
+  { emoji: "🎵", title: "Her playlist taste", desc: "Picks songs that feel like daydreams on a bus ride." },
+  { emoji: "☕", title: "Chai hours", desc: "Best conversations happen over slow, unhurried cups." },
+  { emoji: "🌙", title: "Late night energy", desc: "When the world quiets down, she gets more real." },
+  { emoji: "📱", title: "Text response speed", desc: "Reads in 2s. Replies when she's ready. Respectable." },
+  { emoji: "🌸", title: "Softness as strength", desc: "Never mistake gentle for weak. Never." },
+  { emoji: "💬", title: "How she listens", desc: "Actually listens. The rarest thing in humans." },
+];
+
+const TIMELINE = [
+  { date: "The first time", title: "A feeling without a name", desc: "Some encounters change the air in a room. This was one of those." },
+  { date: "After a while", title: "Realizing you were different", desc: "Not grand. In the small way — the way you notice a song changes everything." },
+  { date: "Right now", title: "Building this instead of saying nothing", desc: "Code is how some people speak. This is that — honest and clumsy and real." },
+  { date: "Hopefully someday", title: "Chai and an actual conversation", desc: "The slow kind. No rushing. Just talking like there's no agenda at all." },
+  { date: "Always", title: "A number you can call", desc: "7001684412 — no explanation needed, no questions asked. Just available." },
+];
+
+const FLIP_CAPTIONS = [
+  { title: "That look", desc: "When you're only half listening but fully there." },
+  { title: "Candid", desc: "The unguarded ones are always the best ones." },
+  { title: "Just because", desc: "No reason needed at all." },
+  { title: "The real one", desc: "The one you don't notice yourself making." },
+  { title: "Here", desc: "In this moment. Exactly here." },
+];
 
 function MoonlightWorld({ onNavigate }) {
   return (
@@ -481,176 +1033,54 @@ function MoonlightWorld({ onNavigate }) {
       <nav className="moon-nav content">
         <div className="moon-logo">✨ Sukanya</div>
         <ul className="moon-nav-links">
-          <li><a href="#worlds">Enter a World</a></li>
-          <li><a href="#heartbeat">Heartbeat</a></li>
+          <li><a href="#vibes">Her Vibes</a></li>
           <li><a href="#gallery">Gallery</a></li>
+          <li><a href="#heartbeat">Heartbeat</a></li>
         </ul>
       </nav>
 
       {/* HERO */}
       <section className="moon-hero">
         <div className="moon-hero-inner">
-          <motion.div className="moon-hero-badge" initial={{ opacity:0, y:30 }} animate={{ opacity:1, y:0 }} transition={{ duration:0.7 }}>
-            <span>🌙</span> A World Built For Her
+          <motion.div className="moon-hero-badge" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
+            <span>🌸</span> Her World
           </motion.div>
-          <motion.h1 initial={{ opacity:0, y:40 }} animate={{ opacity:1, y:0 }} transition={{ duration:0.8, delay:0.1 }}>
-            Hey, <em>Sukanya</em>.<br />This is for you.
+          <motion.h1 initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.1 }}>
+            Everything worth<br /><em>remembering</em>.
           </motion.h1>
-          <motion.p className="moon-hero-sub" initial={{ opacity:0 }} animate={{ opacity:1 }} transition={{ duration:0.8, delay:0.2 }}>
-            A quiet little world built from real feelings. Not grand. Not perfect.
-            Just honest — the way you deserve things to be.
+          <motion.p className="moon-hero-sub" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8, delay: 0.2 }}>
+            Friends, vibes, memories, water reminders. This is her space.
           </motion.p>
-          {/* PROMINENT ENTER REALM CTA */}
-          <motion.div className="hero-realm-cta" initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} transition={{ duration:0.7, delay:0.3 }}>
-            <a href="#worlds" className="btn-enter-realm" onClick={() => playSound("click")}>
-              ✨ Enter Her Worlds ✨
-            </a>
-          </motion.div>
         </div>
       </section>
 
-      {/* WORLD PORTALS — prominent, right after hero */}
-      <section className="worlds-section content" id="worlds">
-        <span className="section-eyebrow" style={{ color:"var(--moon-accent1)" }}>Choose</span>
-        <h2 className="section-title" style={{ color:"var(--moon-text)" }}>Enter a Realm</h2>
-        <div className="worlds-grid">
-          {[
-            { cls:"portal-moon", icon:"🌙", tag:"World 1 — You're here", title:"Moonlight Reverie", world:null,
-              desc:"The quiet, dreamy landing. Stars, silvered thoughts, and everything between." },
-            { cls:"portal-blossom", icon:"🌸", tag:"World 2 — Memories", title:"Blossom Chronicles", world:"blossom",
-              desc:"A warm, coral-lit world of memories, golden afternoons, and who she really is." },
-            { cls:"portal-cosmic", icon:"✨", tag:"World 3 — Slam Book", title:"Cosmic Dreams", world:"cosmic",
-              desc:"Celestial, glowing. Where messages live forever like stars in the sky." },
-          ].map(p => (
-            <button key={p.title} className={`world-portal ${p.cls}`}
-              onClick={() => { if(p.world) { playSound("click"); onNavigate(p.world); } }}
-            >
-              <span className="portal-icon">{p.icon}</span>
-              <span className="portal-tag">{p.tag}</span>
-              <h3>{p.title}</h3>
-              <p>{p.desc}</p>
-              <span className="portal-enter">{p.world ? "Enter Realm →" : "✓ You're here"}</span>
-            </button>
-          ))}
-        </div>
-      </section>
+      {/* FRIENDS TOOLS — small icon row */}
+      <section className="friends-tools-section content" id="tools">
+        <span className="section-eyebrow" style={{ color: "var(--moon-accent1)" }}>For Her Friends</span>
+        <h2 className="section-title" style={{ color: "var(--moon-text)", marginBottom: "1.5rem" }}>Little things that pop</h2>
 
-      {/* ABOUT */}
-      <section className="moon-about content" id="about">
-        <div className="moon-about-img">
-          <img src="/1.jpeg" alt="Sukanya" onError={e => e.target.style.display="none"} />
-        </div>
-        <div className="moon-about-text fade-up">
-          <span className="section-eyebrow">About Her</span>
-          <h2 className="section-title">Someone you feel<br />before you understand.</h2>
-          <p>She carries whole universes in her silences. The kind of person who makes ordinary Tuesday afternoons feel like they matter. Sharp, soft, and more than any label — she deserves a world that says exactly that.</p>
-          <div className="moon-facts">
-            {[{ num:"∞", label:"Reasons to admire" },{ num:"7:01", label:"SOS available" },{ num:"3", label:"Worlds for her" },{ num:"💕", label:"Pure intentions" }].map((f,i) => (
-              <div key={i} className="moon-fact">
-                <div className="moon-fact-num">{f.num}</div>
-                <div className="moon-fact-label">{f.label}</div>
-              </div>
-            ))}
+        <div className="friends-icons-row">
+          <div className="friend-icon-card">
+            <FunWaterTracker />
+          </div>
+          <div className="friend-icon-card">
+            <TarotCard />
+          </div>
+          <div className="friend-icon-card">
+            <MiniPlaylist />
           </div>
         </div>
       </section>
 
-      {/* HEARTBEAT */}
-      <div id="heartbeat"><HeartbeatMonitor /></div>
-
-      {/* GALLERY — all 5 photos */}
-      <section className="moon-gallery content" id="gallery">
-        <span className="section-eyebrow" style={{ color:"var(--moon-accent1)" }}>Gallery</span>
-        <h2 className="section-title" style={{ color:"var(--moon-text)" }}>Moments worth keeping</h2>
-        <div className="moon-gallery-grid">
-          {photos.map((src, i) => (
-            <figure key={i} className="photo-item">
-              <img src={src} alt={photoLabels[i]} onError={e => {
-                e.target.style.display="none";
-                e.target.nextSibling && (e.target.nextSibling.style.display="flex");
-              }} />
-              <div className="photo-placeholder" style={{ display:"none" }}>
-                📸<span>{photoLabels[i]}</span>
-              </div>
-            </figure>
-          ))}
-        </div>
-      </section>
-
-      <section className="moon-sos content">
-        <p>Available anytime — day or night, no explanation needed.</p>
-        <a href="tel:7001684412" className="btn-sos" onClick={() => playSound("click")}>🆘 SOS: 7001684412</a>
-      </section>
-    </div>
-  );
-}
-
-/* ═══════════════════════════════════════════════
-   WORLD 2 — BLOSSOM CHRONICLES
-═══════════════════════════════════════════════ */
-const TIMELINE = [
-  { date:"The first time", title:"A feeling without a name", desc:"Some encounters change the air in a room. This was one of those. You probably didn't know." },
-  { date:"After a while", title:"Realizing you were different", desc:"Not grand. In the small way — the way you notice a song changes everything when it comes on." },
-  { date:"Right now", title:"Building this instead of saying nothing", desc:"Code is how some people speak. This is that — an honest, clumsy, real gesture." },
-  { date:"Hopefully someday", title:"Chai and an actual conversation", desc:"The slow kind. No rushing. Just talking like there's no agenda at all." },
-  { date:"Always", title:"A number you can call", desc:"7001684412 — no explanation needed, no questions asked. Just available." },
-];
-const FLIP_CAPTIONS = [
-  { title:"That look", desc:"When you're only half listening but fully there." },
-  { title:"Candid", desc:"The unguarded ones are always the best ones." },
-  { title:"Just because", desc:"No reason needed at all." },
-  { title:"The real one", desc:"The one you don't notice yourself making." },
-  { title:"Here", desc:"In this moment. Exactly here." },
-];
-const VIBES = [
-  { emoji:"🎵", title:"Her playlist taste", desc:"Picks songs that feel like daydreams on a bus ride." },
-  { emoji:"☕", title:"Chai hours", desc:"Best conversations happen over slow, unhurried cups." },
-  { emoji:"🌙", title:"Late night energy", desc:"When the world quiets down, she gets more real." },
-  { emoji:"📱", title:"Text response speed", desc:"Reads in 2s. Replies when she's ready. Respectable." },
-  { emoji:"🌸", title:"Softness as strength", desc:"Never mistake gentle for weak. Never." },
-  { emoji:"💬", title:"How she listens", desc:"Actually listens. The rarest thing in humans." },
-];
-
-function BlossomWorld({ onBack, onNavigate }) {
-  return (
-    <div className="w-blossom world-fade-enter" style={{ position:"relative", overflow:"hidden" }}>
-      {[{e:"🌸",s:{top:"5%",left:"3%",animationDelay:"0s"}},{e:"✨",s:{top:"20%",right:"5%",animationDelay:"1.5s"}},{e:"🌺",s:{bottom:"30%",left:"2%",animationDelay:"3s"}}].map((f,i)=>(
-        <div key={i} className="emoji-float" style={f.s}>{f.e}</div>
-      ))}
-
-      <nav className="blossom-nav">
-        <div className="blossom-logo">🌸 Blossom</div>
-        <button className="back-btn" onClick={() => { playSound("click"); onBack(); }}>← Moonlight</button>
-      </nav>
-
-      <section className="blossom-hero">
-        <motion.span className="section-eyebrow" initial={{ opacity:0 }} animate={{ opacity:1 }}>
-          World 2 — Blossom Chronicles
-        </motion.span>
-        <motion.h1 initial={{ opacity:0, y:40 }} animate={{ opacity:1, y:0 }} transition={{ duration:0.8, delay:0.1 }}>
-          Warm days &amp; <em>golden memories</em>
-        </motion.h1>
-        <motion.p initial={{ opacity:0 }} animate={{ opacity:1 }} transition={{ delay:0.25 }}>
-          Not everything needs to be written. Some things are better lived, remembered, and felt.
-        </motion.p>
-      </section>
-
-      {/* FUN FACT BAR */}
-      <div style={{ padding:"0 clamp(1.5rem,5vw,4rem)", maxWidth:"900px", margin:"0 auto" }}>
-        <div className="fun-fact-bar">
-          "She's the kind of person you write songs about without realising you're doing it." 🎶
-        </div>
-      </div>
-
       {/* VIBES */}
-      <section className="blossom-vibes">
-        <span className="section-eyebrow" style={{ color:"var(--blossom-coral)" }}>Things about her 🌸</span>
-        <h2 className="section-title" style={{ color:"var(--blossom-text)" }}>Her energy in cards</h2>
+      <section className="blossom-vibes" id="vibes">
+        <span className="section-eyebrow" style={{ color: "var(--blossom-coral)" }}>Things about her 🌸</span>
+        <h2 className="section-title" style={{ color: "var(--moon-text)" }}>Her energy in cards</h2>
         <div className="vibes-grid">
-          {VIBES.map((v,i) => (
+          {VIBES.map((v, i) => (
             <motion.div key={i} className="vibe-card"
-              initial={{ opacity:0, y:30 }} whileInView={{ opacity:1, y:0 }}
-              viewport={{ once:true }} transition={{ duration:0.5, delay:i*0.08 }}
+              initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }} transition={{ duration: 0.5, delay: i * 0.08 }}
             >
               <span className="vibe-emoji">{v.emoji}</span>
               <h4>{v.title}</h4>
@@ -660,18 +1090,15 @@ function BlossomWorld({ onBack, onNavigate }) {
         </div>
       </section>
 
-      {/* WATER TRACKER */}
-      <FunWaterTracker />
-
       {/* TIMELINE */}
       <section className="blossom-timeline">
-        <span className="section-eyebrow" style={{ color:"var(--blossom-coral)" }}>Timeline</span>
-        <h2 className="section-title" style={{ color:"var(--blossom-text)" }}>How we got here</h2>
+        <span className="section-eyebrow" style={{ color: "var(--blossom-coral)" }}>Timeline</span>
+        <h2 className="section-title" style={{ color: "var(--moon-text)" }}>How we got here</h2>
         <div className="timeline-list">
-          {TIMELINE.map((item,i) => (
-            <motion.div key={i} className="timeline-item" style={{ "--i":i }}
-              initial={{ opacity:0, x:-30 }} whileInView={{ opacity:1, x:0 }}
-              viewport={{ once:true }} transition={{ duration:0.6, delay:i*0.1 }}
+          {TIMELINE.map((item, i) => (
+            <motion.div key={i} className="timeline-item" style={{ "--i": i }}
+              initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }} transition={{ duration: 0.6, delay: i * 0.1 }}
             >
               <div className="timeline-dot" />
               <div className="timeline-date">{item.date}</div>
@@ -682,21 +1109,21 @@ function BlossomWorld({ onBack, onNavigate }) {
         </div>
       </section>
 
-      {/* FLIP GALLERY — all 5 photos */}
-      <section className="blossom-gallery">
-        <span className="section-eyebrow" style={{ color:"var(--blossom-coral)" }}>Gallery</span>
-        <h2 className="section-title" style={{ color:"var(--blossom-text)" }}>Hover to reveal ✨</h2>
+      {/* GALLERY — flip cards */}
+      <section className="blossom-gallery" id="gallery">
+        <span className="section-eyebrow" style={{ color: "var(--blossom-coral)" }}>Gallery</span>
+        <h2 className="section-title" style={{ color: "var(--moon-text)" }}>Hover to reveal ✨</h2>
         <div className="blossom-gallery-grid">
           {photos.map((src, i) => (
             <div key={i} className="flip-card">
               <div className="flip-inner">
                 <div className="flip-front">
-                  <img src={src} alt={`Photo ${i+1}`} onError={e => {
-                    e.target.style.display="none";
+                  <img src={src} alt={`Photo ${i + 1}`} onError={e => {
+                    e.target.style.display = "none";
                     const pb = e.target.parentElement.querySelector(".flip-placeholder");
-                    if(pb) pb.style.display="flex";
+                    if (pb) pb.style.display = "flex";
                   }} />
-                  <div className="flip-placeholder" style={{ display:"none", width:"100%", height:"100%", alignItems:"center", justifyContent:"center", fontSize:"3rem", background:"linear-gradient(135deg,hsl(20,80%,95%),hsl(0,80%,93%))" }}>📸</div>
+                  <div className="flip-placeholder" style={{ display: "none", width: "100%", height: "100%", alignItems: "center", justifyContent: "center", fontSize: "3rem", background: "linear-gradient(135deg,hsl(20,80%,95%),hsl(0,80%,93%))" }}>📸</div>
                 </div>
                 <div className="flip-back">
                   <h4>{FLIP_CAPTIONS[i].title}</h4>
@@ -708,16 +1135,31 @@ function BlossomWorld({ onBack, onNavigate }) {
         </div>
       </section>
 
-      <section className="blossom-sos">
-        <button className="blossom-back-home" onClick={() => { playSound("click"); onNavigate("cosmic"); }}>
-          ✨ Go to Cosmic Dreams →
-        </button>
-        <br />
-        <p style={{ color:"var(--blossom-text-soft)", marginTop:"1.5rem" }}>
-          When it gets heavy — just call.
-        </p>
-        <a href="tel:7001684412" className="btn-sos" onClick={() => playSound("click")}>🆘 SOS: 7001684412</a>
+      {/* HEARTBEAT */}
+      <div id="heartbeat"><HeartbeatMonitor /></div>
+
+      {/* GOT YOUR BACK ENDING */}
+      <section className="got-your-back content">
+        <motion.div
+          className="gotback-card"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7 }}
+        >
+          <div className="gotback-icon">🫂</div>
+          <h2 className="gotback-title">You always got my back.</h2>
+          <p className="gotback-sub">That's the whole point of this.</p>
+          <a href="tel:7001684412" className="btn-sos" onClick={() => playSound("click")}>🆘 SOS: 7001684412</a>
+        </motion.div>
       </section>
+
+      {/* GO TO COSMIC */}
+      <div style={{ textAlign: "center", padding: "2rem 1rem 4rem" }}>
+        <button className="blossom-back-home" onClick={() => { playSound("click"); onNavigate("cosmic"); }}>
+          ✨ Leave her a cosmic message →
+        </button>
+      </div>
     </div>
   );
 }
@@ -726,18 +1168,18 @@ function BlossomWorld({ onBack, onNavigate }) {
    WORLD 3 — COSMIC DREAMS
 ═══════════════════════════════════════════════ */
 const SLAM_LEVELS = [
-  { id:1, label:"Level 1", title:"Quick Hello" },
-  { id:2, label:"Level 2", title:"Personal Touch" },
-  { id:3, label:"Level 3", title:"Rich Memory" },
-  { id:4, label:"Level 4", title:"Deep Dive" },
-  { id:5, label:"Level 5", title:"Full Archive" },
+  { id: 1, label: "Level 1", title: "Quick Hello" },
+  { id: 2, label: "Level 2", title: "Personal Touch" },
+  { id: 3, label: "Level 3", title: "Rich Memory" },
+  { id: 4, label: "Level 4", title: "Deep Dive" },
+  { id: 5, label: "Level 5", title: "Full Archive" },
 ];
-const MOODS = ["💫 Inspired","🌊 Calm","🔥 Energetic","🌙 Nostalgic","💕 Warm","⚡ Excited"];
-const RELATIONS = ["Friend","Close Friend","Admirer","Colleague","Family","Stranger with love"];
+const MOODS = ["💫 Inspired", "🌊 Calm", "🔥 Energetic", "🌙 Nostalgic", "💕 Warm", "⚡ Excited"];
+const RELATIONS = ["Friend", "Close Friend", "Admirer", "Colleague", "Family", "Stranger with love"];
 
 function SlamBookForm({ level, onSuccess }) {
-  const [data, setData] = useState({ name:"", message:"", mood:"", relation:"", story:"", visibility:"public", spotifyLink:"", location:"", tags:"" });
-  const set = (k, v) => setData(d => ({ ...d, [k]:v }));
+  const [data, setData] = useState({ name: "", message: "", mood: "", relation: "", story: "", visibility: "public", spotifyLink: "", location: "", tags: "" });
+  const set = (k, v) => setData(d => ({ ...d, [k]: v }));
   const submit = (e) => {
     e.preventDefault();
     const entries = JSON.parse(localStorage.getItem("slambook") || "[]");
@@ -750,17 +1192,17 @@ function SlamBookForm({ level, onSuccess }) {
     <form className="slam-form" onSubmit={submit}>
       <div className="form-group">
         <label>Your Name</label>
-        <input className="form-input" placeholder="What should she call you?" value={data.name} onChange={e=>set("name",e.target.value)} required />
+        <input className="form-input" placeholder="What should she call you?" value={data.name} onChange={e => set("name", e.target.value)} required />
       </div>
       <div className="form-group">
         <label>One-liner ✨</label>
-        <input className="form-input" placeholder="One thing you want her to know..." value={data.message} onChange={e=>set("message",e.target.value)} required />
+        <input className="form-input" placeholder="One thing you want her to know..." value={data.message} onChange={e => set("message", e.target.value)} required />
       </div>
       <div className="form-group">
         <label>Your Mood</label>
         <div className="mood-selector">
           {MOODS.map(m => (
-            <button key={m} type="button" className={`mood-btn${data.mood===m?" selected":""}`} onClick={()=>set("mood",m)}>{m}</button>
+            <button key={m} type="button" className={`mood-btn${data.mood === m ? " selected" : ""}`} onClick={() => set("mood", m)}>{m}</button>
           ))}
         </div>
       </div>
@@ -768,22 +1210,22 @@ function SlamBookForm({ level, onSuccess }) {
         <>
           <div className="form-group">
             <label>Your Story / Memory</label>
-            <textarea className="form-input" placeholder="A memory, a feeling (up to 500 chars)..." maxLength={500} value={data.story} onChange={e=>set("story",e.target.value)} />
+            <textarea className="form-input" placeholder="A memory, a feeling (up to 500 chars)..." maxLength={500} value={data.story} onChange={e => set("story", e.target.value)} />
           </div>
           <div className="form-row">
             <div className="form-group">
               <label>Relationship</label>
-              <select className="form-input" value={data.relation} onChange={e=>set("relation",e.target.value)}>
+              <select className="form-input" value={data.relation} onChange={e => set("relation", e.target.value)}>
                 <option value="">Select...</option>
-                {RELATIONS.map(r=><option key={r}>{r}</option>)}
+                {RELATIONS.map(r => <option key={r}>{r}</option>)}
               </select>
             </div>
             <div className="form-group">
               <label>Visibility</label>
               <div className="visibility-toggle">
-                {["public","private"].map(v=>(
-                  <button key={v} type="button" className={`vis-btn${data.visibility===v?" active":""}`} onClick={()=>set("visibility",v)}>
-                    {v==="public" ? "🌏 Public" : "🔒 Private"}
+                {["public", "private"].map(v => (
+                  <button key={v} type="button" className={`vis-btn${data.visibility === v ? " active" : ""}`} onClick={() => set("visibility", v)}>
+                    {v === "public" ? "🌏 Public" : "🔒 Private"}
                   </button>
                 ))}
               </div>
@@ -795,25 +1237,25 @@ function SlamBookForm({ level, onSuccess }) {
         <div className="form-row">
           <div className="form-group">
             <label>Location / Date</label>
-            <input className="form-input" placeholder="e.g. Kolkata, March 2025" value={data.location} onChange={e=>set("location",e.target.value)} />
+            <input className="form-input" placeholder="e.g. Kolkata, March 2025" value={data.location} onChange={e => set("location", e.target.value)} />
           </div>
           <div className="form-group">
             <label>Tags</label>
-            <input className="form-input" placeholder="e.g. chai, music" value={data.tags} onChange={e=>set("tags",e.target.value)} />
+            <input className="form-input" placeholder="e.g. chai, music" value={data.tags} onChange={e => set("tags", e.target.value)} />
           </div>
         </div>
       )}
       {level >= 4 && (
         <div className="form-group">
           <label>Spotify Song 🎵</label>
-          <input className="form-input" placeholder="https://open.spotify.com/track/..." value={data.spotifyLink} onChange={e=>set("spotifyLink",e.target.value)} />
+          <input className="form-input" placeholder="https://open.spotify.com/track/..." value={data.spotifyLink} onChange={e => set("spotifyLink", e.target.value)} />
         </div>
       )}
       {level >= 5 && (
         <div className="form-group">
           <label>Birthday Reminder</label>
           <input className="form-input" type="date" />
-          <small style={{ color:"var(--cosmic-text-soft)", fontSize:"0.78rem", marginTop:"0.3rem", display:"block" }}>We'll remind you ✨</small>
+          <small style={{ color: "var(--cosmic-text-soft)", fontSize: "0.78rem", marginTop: "0.3rem", display: "block" }}>We'll remind you ✨</small>
         </div>
       )}
       <button type="submit" className="btn-cosmic-submit" onClick={() => playSound("click")}>
@@ -837,15 +1279,15 @@ function CosmicWorld({ onBack }) {
       <StarCanvas variant="cosmic" />
       <nav className="cosmic-nav content">
         <div className="cosmic-logo">✨ Cosmic</div>
-        <button className="back-btn" style={{ color:"var(--cosmic-text-soft)" }} onClick={() => { playSound("click"); onBack(); }}>← Moonlight</button>
+        <button className="back-btn" style={{ color: "var(--cosmic-text-soft)" }} onClick={() => { playSound("click"); onBack(); }}>← Back</button>
       </nav>
       <section className="cosmic-hero">
         <div className="cosmic-hero-inner">
-          <motion.span className="section-eyebrow" initial={{ opacity:0 }} animate={{ opacity:1 }}>World 3 — Cosmic Dreams</motion.span>
-          <motion.h1 initial={{ opacity:0, y:40 }} animate={{ opacity:1, y:0 }} transition={{ duration:0.8, delay:0.1 }}>
+          <motion.span className="section-eyebrow" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>Cosmic Dreams</motion.span>
+          <motion.h1 initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.1 }}>
             Leave her a <em>cosmic message</em>
           </motion.h1>
-          <motion.p initial={{ opacity:0 }} animate={{ opacity:1 }} transition={{ delay:0.25 }}>
+          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.25 }}>
             Words that float like stars. Messages that stay. This is the slam book she deserves.
           </motion.p>
         </div>
@@ -853,12 +1295,12 @@ function CosmicWorld({ onBack }) {
       <section className="slambook-section content">
         <span className="section-eyebrow">Slam Book</span>
         <h2 className="section-title">Write your entry</h2>
-        <p style={{ color:"var(--cosmic-text-soft)", marginBottom:"0.5rem" }}>
+        <p style={{ color: "var(--cosmic-text-soft)", marginBottom: "0.5rem" }}>
           Choose your depth — all levels are equally valid. ✨
         </p>
         <div className="level-tabs">
           {SLAM_LEVELS.map(l => (
-            <button key={l.id} className={`level-tab${level===l.id?" active":""}`}
+            <button key={l.id} className={`level-tab${level === l.id ? " active" : ""}`}
               onClick={() => { setLevel(l.id); setSubmitted(false); playSound("click"); }}
             >{l.label}: {l.title}</button>
           ))}
@@ -866,7 +1308,7 @@ function CosmicWorld({ onBack }) {
         <AnimatePresence mode="wait">
           {submitted ? (
             <motion.div key="success" className="slam-form success-screen"
-              initial={{ opacity:0, scale:0.9 }} animate={{ opacity:1, scale:1 }} exit={{ opacity:0 }}
+              initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }}
             >
               <div className="success-icon">🌟</div>
               <h2>Sent into the cosmos!</h2>
@@ -874,20 +1316,20 @@ function CosmicWorld({ onBack }) {
               <button className="btn-cosmic-ghost" onClick={() => setSubmitted(false)}>Write Another ✨</button>
             </motion.div>
           ) : (
-            <motion.div key={`form-${level}`} initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} exit={{ opacity:0, y:-20 }}>
+            <motion.div key={`form-${level}`} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}>
               <SlamBookForm level={level} onSuccess={() => setSubmitted(true)} />
             </motion.div>
           )}
         </AnimatePresence>
       </section>
-      {entries.filter(e=>e.visibility!=="private").length > 0 && (
+      {entries.filter(e => e.visibility !== "private").length > 0 && (
         <section className="entries-section content">
-          <span className="section-eyebrow" style={{ color:"var(--cosmic-gold)" }}>Messages from the cosmos</span>
-          <h2 className="section-title" style={{ fontSize:"1.8rem", marginBottom:"2rem" }}>What people say about her ✨</h2>
-          {entries.filter(e=>e.visibility!=="private").map((e,i) => (
+          <span className="section-eyebrow" style={{ color: "var(--cosmic-gold)" }}>Messages from the cosmos</span>
+          <h2 className="section-title" style={{ fontSize: "1.8rem", marginBottom: "2rem" }}>What people say about her ✨</h2>
+          {entries.filter(e => e.visibility !== "private").map((e, i) => (
             <motion.div key={i} className="entry-card entry-glow"
-              initial={{ opacity:0, y:20 }} whileInView={{ opacity:1, y:0 }}
-              viewport={{ once:true }} transition={{ duration:0.5, delay:i*0.07 }}
+              initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }} transition={{ duration: 0.5, delay: i * 0.07 }}
             >
               <div className="entry-header">
                 <div className="entry-avatar">{e.name?.[0]?.toUpperCase() || "✨"}</div>
@@ -897,14 +1339,14 @@ function CosmicWorld({ onBack }) {
                 </div>
               </div>
               <p className="entry-message">{e.message}</p>
-              {e.story && <p className="entry-message" style={{ marginTop:"0.7rem", opacity:0.8, fontSize:"0.9rem" }}>{e.story}</p>}
-              {e.location && <p style={{ fontSize:"0.78rem", color:"var(--cosmic-gold)", marginTop:"0.5rem" }}>📍 {e.location}</p>}
+              {e.story && <p className="entry-message" style={{ marginTop: "0.7rem", opacity: 0.8, fontSize: "0.9rem" }}>{e.story}</p>}
+              {e.location && <p style={{ fontSize: "0.78rem", color: "var(--cosmic-gold)", marginTop: "0.5rem" }}>📍 {e.location}</p>}
             </motion.div>
           ))}
         </section>
       )}
       <div className="cosmic-sos content">
-        <p>Need her right now? She gave permission to share this.</p>
+        <p>Need her right now?</p>
         <a href="tel:7001684412" className="btn-sos" onClick={() => playSound("click")}>🆘 SOS: 7001684412</a>
       </div>
     </div>
@@ -915,33 +1357,63 @@ function CosmicWorld({ onBack }) {
    APP ROOT
 ═══════════════════════════════════════════════ */
 const SPOTIFY_TRACKS = {
+  landing: null,
+  love: "2znooFkKzDQ3mC8sWCFuG6",
   moon: "0cYohCh24y1aMjJmcS9RBl",
-  blossom: "2znooFkKzDQ3mC8sWCFuG6",
   cosmic: "0cYohCh24y1aMjJmcS9RBl",
 };
 
 export default function App() {
-  const [world, setWorld] = useState("moon");
+  const [world, setWorld] = useState("landing");
+  const [showLetter, setShowLetter] = useState(true);
+  const [showGuide, setShowGuide] = useState(false);
+
   return (
     <>
+      {/* OPENING LETTER — shows once on load */}
+      <AnimatePresence>
+        {showLetter && <OpeningLetter onClose={() => setShowLetter(false)} />}
+      </AnimatePresence>
+
+      {/* GUIDE */}
+      <AnimatePresence>
+        {showGuide && <GuidePage onClose={() => setShowGuide(false)} />}
+      </AnimatePresence>
+
       <VolumeToast />
       <GlobalSOS />
       <SlamSidebar />
       <PersonalNotepad />
-      <SpotifyWidget key={world} trackId={SPOTIFY_TRACKS[world]} />
+
+      {/* GUIDE BUTTON */}
+      <button
+        className="guide-fab"
+        title="What's in here?"
+        onClick={() => { setShowGuide(true); playSound("click"); }}
+      >
+        ?
+      </button>
+
+      {world !== "landing" && <SpotifyWidget key={world} trackId={SPOTIFY_TRACKS[world]} />}
+
       <AnimatePresence mode="wait">
+        {world === "landing" && (
+          <motion.div key="landing" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.4 }}>
+            <LandingPage onChoose={setWorld} />
+          </motion.div>
+        )}
+        {world === "love" && (
+          <motion.div key="love" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.4 }}>
+            <LovePage onBack={() => setWorld("landing")} onNavigate={setWorld} />
+          </motion.div>
+        )}
         {world === "moon" && (
-          <motion.div key="moon" initial={{ opacity:0 }} animate={{ opacity:1 }} exit={{ opacity:0 }} transition={{ duration:0.4 }}>
+          <motion.div key="moon" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.4 }}>
             <MoonlightWorld onNavigate={setWorld} />
           </motion.div>
         )}
-        {world === "blossom" && (
-          <motion.div key="blossom" initial={{ opacity:0 }} animate={{ opacity:1 }} exit={{ opacity:0 }} transition={{ duration:0.4 }}>
-            <BlossomWorld onBack={() => setWorld("moon")} onNavigate={setWorld} />
-          </motion.div>
-        )}
         {world === "cosmic" && (
-          <motion.div key="cosmic" initial={{ opacity:0 }} animate={{ opacity:1 }} exit={{ opacity:0 }} transition={{ duration:0.4 }}>
+          <motion.div key="cosmic" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.4 }}>
             <CosmicWorld onBack={() => setWorld("moon")} />
           </motion.div>
         )}

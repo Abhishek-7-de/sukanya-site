@@ -1157,3 +1157,322 @@ textarea.form-input { resize: vertical; min-height: 100px; }
   50% { background-position: 100% 50%; }
 }
 
+
+/* ═══════════════════════════════════════════════════
+   OPENING LETTER POPUP
+═══════════════════════════════════════════════════ */
+.letter-overlay {
+  position: fixed; inset: 0; z-index: 10000;
+  background: rgba(5, 5, 20, 0.88);
+  display: flex; align-items: center; justify-content: center;
+  padding: 1.5rem;
+  backdrop-filter: blur(6px);
+}
+.letter-modal {
+  background: linear-gradient(145deg, hsl(240,43%,20%), hsl(240,40%,14%));
+  border: 1px solid hsla(264,100%,75%,0.25);
+  border-radius: 24px;
+  padding: 2.5rem 2rem 2rem;
+  max-width: 480px; width: 100%;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.5), 0 0 60px hsla(264,100%,70%,0.1);
+  text-align: center;
+}
+.letter-top-deco { font-size: 2.5rem; margin-bottom: 1.2rem; }
+.letter-text {
+  color: hsl(240,40%,88%);
+  font-size: 0.98rem; line-height: 1.75;
+  margin-bottom: 0.9rem; font-family: var(--ff-body);
+}
+.letter-close-btn {
+  margin-top: 1.5rem;
+  padding: 0.8rem 2.5rem;
+  background: linear-gradient(135deg, var(--moon-accent1), hsl(264,100%,65%));
+  color: #fff; border-radius: 100px;
+  font-weight: 600; font-size: 1rem;
+  box-shadow: 0 8px 30px var(--moon-glow);
+  transition: all 0.3s var(--ease-expo);
+}
+.letter-close-btn:hover { transform: translateY(-3px) scale(1.03); }
+
+/* NEUTRAL LANDING PAGE */
+.w-landing {
+  min-height: 100vh;
+  background: linear-gradient(160deg, var(--moon-bg2), var(--moon-bg));
+  display: flex; align-items: center; justify-content: center;
+  position: relative; overflow: hidden;
+}
+.landing-center {
+  position: relative; z-index: 2;
+  text-align: center; padding: 2rem 1.5rem;
+  max-width: 520px; margin: 0 auto;
+}
+.landing-letter-deco { font-size: 3.5rem; margin-bottom: 1rem; }
+.landing-title {
+  font-family: var(--ff-display);
+  font-size: clamp(2.4rem, 6vw, 4rem);
+  color: var(--moon-text); line-height: 1.15; margin-bottom: 0.8rem;
+}
+.landing-title em { font-style: italic; color: var(--moon-accent1); }
+.landing-sub {
+  color: var(--moon-text-soft);
+  font-size: 1.05rem; line-height: 1.65; margin-bottom: 2.5rem;
+}
+.landing-choices {
+  display: flex; flex-direction: column; gap: 1rem; align-items: center;
+}
+.landing-choice-btn {
+  width: 100%; max-width: 360px; padding: 1.2rem 1.8rem;
+  border-radius: 18px; display: flex; flex-direction: column; align-items: flex-start;
+  gap: 0.2rem; transition: all 0.35s var(--ease-expo); text-align: left;
+}
+.landing-choice-love {
+  background: linear-gradient(135deg, hsla(350,80%,60%,0.18), hsla(290,80%,65%,0.12));
+  border: 1px solid hsla(350,80%,65%,0.3);
+  box-shadow: 0 8px 30px hsla(350,80%,60%,0.15);
+}
+.landing-choice-love:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 16px 40px hsla(350,80%,60%,0.25);
+}
+.landing-choice-friends {
+  background: linear-gradient(135deg, hsla(264,100%,75%,0.15), hsla(210,60%,85%,0.1));
+  border: 1px solid hsla(264,100%,75%,0.25);
+  box-shadow: 0 8px 30px hsla(264,100%,70%,0.12);
+}
+.landing-choice-friends:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 16px 40px hsla(264,100%,70%,0.22);
+}
+.choice-icon { font-size: 1.6rem; }
+.choice-label { font-size: 1.05rem; font-weight: 600; color: var(--moon-text); }
+.choice-hint { font-size: 0.82rem; color: var(--moon-text-soft); }
+
+/* LOVE PAGE GATE */
+.love-gate {
+  min-height: 100vh;
+  background: linear-gradient(160deg, var(--moon-bg2), var(--moon-bg));
+  display: flex; align-items: center; justify-content: center;
+  padding: 2rem 1.5rem; position: relative; overflow: hidden;
+}
+.love-warning-box {
+  position: relative; z-index: 2;
+  background: linear-gradient(145deg, hsl(240,43%,20%), hsl(240,40%,14%));
+  border: 1px solid hsla(264,100%,75%,0.2); border-radius: 24px;
+  padding: 2.5rem 2rem; max-width: 420px; width: 100%;
+  text-align: center; box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+}
+.love-warning-icon { font-size: 2.5rem; margin-bottom: 1rem; }
+.love-warning-title {
+  font-family: var(--ff-display); color: var(--moon-text);
+  font-size: 1.6rem; margin-bottom: 0.8rem;
+}
+.love-warning-text {
+  color: var(--moon-text-soft); font-size: 0.95rem;
+  line-height: 1.65; margin-bottom: 0.6rem;
+}
+.love-warning-btns { display: flex; flex-direction: column; gap: 0.75rem; margin-top: 1.8rem; }
+.love-warning-proceed {
+  padding: 0.85rem 2rem;
+  background: linear-gradient(135deg, var(--moon-accent1), hsl(264,100%,65%));
+  color: #fff; border-radius: 100px; font-weight: 600; font-size: 1rem;
+  box-shadow: 0 8px 28px var(--moon-glow); transition: all 0.3s var(--ease-expo);
+}
+.love-warning-proceed:hover { transform: translateY(-2px); box-shadow: 0 14px 36px var(--moon-glow); }
+.love-warning-back {
+  padding: 0.75rem; color: var(--moon-text-soft); font-size: 0.9rem; transition: color 0.2s;
+}
+.love-warning-back:hover { color: var(--moon-text); }
+.love-pw-input {
+  width: 100%; padding: 0.85rem 1.2rem;
+  background: hsla(240,35%,28%,0.6);
+  border: 1px solid hsla(264,100%,75%,0.25); border-radius: 12px;
+  color: var(--moon-text); font-size: 1.1rem; text-align: center;
+  letter-spacing: 0.3em; margin-top: 1rem;
+  transition: border 0.2s, box-shadow 0.2s;
+}
+.love-pw-input:focus { outline: none; border-color: var(--moon-accent1); box-shadow: 0 0 0 3px var(--moon-glow); }
+.love-pw-input.shake { animation: shake 0.4s var(--ease-snap); border-color: hsl(350,90%,65%); }
+@keyframes shake {
+  0%,100% { transform: translateX(0); }
+  20% { transform: translateX(-8px); }
+  40% { transform: translateX(8px); }
+  60% { transform: translateX(-5px); }
+  80% { transform: translateX(5px); }
+}
+.love-pw-error { color: hsl(350,90%,65%); font-size: 0.85rem; margin-top: 0.5rem; }
+
+/* BUTTERFLIES */
+.butterflies-section { padding: 5rem 0 3rem; text-align: center; }
+.btn-who {
+  padding: 0.9rem 2.5rem;
+  background: linear-gradient(135deg, hsla(350,80%,60%,0.25), hsla(290,80%,65%,0.2));
+  border: 1px solid hsla(350,80%,65%,0.4); border-radius: 100px;
+  color: var(--moon-text); font-size: 1.05rem; font-weight: 600;
+  transition: all 0.3s var(--ease-expo); box-shadow: 0 6px 24px hsla(350,80%,60%,0.2);
+}
+.btn-who:hover { transform: scale(1.06) translateY(-3px); box-shadow: 0 12px 36px hsla(350,80%,60%,0.35); }
+.butterflies-reveal {
+  text-align: center; padding: 1.5rem;
+  background: hsla(350,80%,60%,0.08); border: 1px solid hsla(350,80%,60%,0.2);
+  border-radius: 20px; max-width: 380px; margin: 0 auto;
+}
+.butterflies-name {
+  font-family: var(--ff-display); font-size: clamp(2rem, 5vw, 3rem);
+  color: var(--moon-text); margin-bottom: 1rem;
+}
+.butterflies-pause { color: var(--moon-text-soft); font-size: 1rem; line-height: 1.7; margin-bottom: 0.6rem; }
+.butterflies-dots { color: var(--moon-accent1); font-size: 1.8rem; letter-spacing: 0.4em; }
+
+/* PARALLEL UNIVERSE */
+.parallel-section { padding: 3rem 0; }
+.parallel-card {
+  background: linear-gradient(145deg, hsla(240,43%,20%,0.7), hsla(264,100%,70%,0.06));
+  border: 1px solid hsla(264,100%,75%,0.18); border-radius: 24px;
+  padding: 2.5rem 2rem; text-align: center;
+}
+.parallel-line {
+  font-family: var(--ff-display); font-style: italic;
+  font-size: clamp(1.3rem, 3.5vw, 2rem); color: var(--moon-text);
+  line-height: 1.45; margin-bottom: 2rem;
+}
+.parallel-photos { display: flex; gap: 0.8rem; justify-content: center; flex-wrap: wrap; }
+.parallel-photo-wrap {
+  width: 100px; height: 130px; border-radius: 14px; overflow: hidden;
+  border: 1px solid hsla(264,100%,75%,0.2); box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+  transform: rotate(-2deg); transition: transform 0.3s var(--ease-expo);
+}
+.parallel-photo-wrap:nth-child(2) { transform: rotate(1.5deg); }
+.parallel-photo-wrap:nth-child(3) { transform: rotate(-1deg); }
+.parallel-photo-wrap:hover { transform: rotate(0) scale(1.05); }
+.parallel-photo-wrap img { width: 100%; height: 100%; object-fit: cover; }
+
+/* COMPLIMENTS */
+.compliments-section { padding: 3rem 0; }
+.compliments-grid { display: flex; flex-wrap: wrap; gap: 0.8rem; justify-content: center; }
+.compliment-bubble {
+  padding: 0.9rem 1.4rem;
+  background: hsla(264,100%,70%,0.1); border: 1px solid hsla(264,100%,75%,0.2);
+  border-radius: 100px; color: var(--moon-text-soft); font-size: 0.9rem;
+  transition: all 0.3s var(--ease-expo); min-width: 120px; max-width: 280px; text-align: center;
+}
+.compliment-bubble:hover { border-color: hsla(264,100%,75%,0.4); background: hsla(264,100%,70%,0.15); }
+.compliment-bubble.active {
+  background: linear-gradient(135deg, hsla(264,100%,70%,0.2), hsla(350,80%,65%,0.12));
+  border-color: hsla(264,100%,75%,0.45); color: var(--moon-text);
+  border-radius: 16px; padding: 1.1rem 1.6rem; font-size: 0.95rem;
+  max-width: 320px; box-shadow: 0 8px 28px var(--moon-glow);
+}
+
+/* GOT YOUR BACK */
+.got-your-back { padding: 4rem 0; text-align: center; }
+.gotback-card {
+  background: linear-gradient(145deg, hsla(264,100%,70%,0.1), hsla(350,80%,60%,0.07));
+  border: 1px solid hsla(264,100%,75%,0.2); border-radius: 28px;
+  padding: 3rem 2rem; max-width: 480px; margin: 0 auto;
+}
+.gotback-icon { font-size: 3rem; margin-bottom: 1rem; }
+.gotback-title {
+  font-family: var(--ff-display); font-size: clamp(1.8rem, 4vw, 2.5rem);
+  color: var(--moon-text); margin-bottom: 0.8rem;
+}
+.gotback-sub { color: var(--moon-text-soft); font-size: 1rem; margin-bottom: 1.8rem; }
+
+/* GUIDE FAB */
+.guide-fab {
+  position: fixed; bottom: 5rem; left: 1rem; z-index: 900;
+  width: 42px; height: 42px; border-radius: 50%;
+  background: hsla(240,43%,25%,0.9); border: 1px solid hsla(264,100%,75%,0.3);
+  color: var(--moon-text-soft); font-weight: 700; font-size: 1rem;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3); transition: all 0.3s;
+  display: flex; align-items: center; justify-content: center;
+}
+.guide-fab:hover {
+  background: hsla(264,100%,70%,0.25); color: var(--moon-text);
+  transform: scale(1.1);
+}
+
+/* GUIDE MODAL */
+.guide-overlay {
+  position: fixed; inset: 0; z-index: 9000;
+  background: rgba(5,5,20,0.85); display: flex; align-items: center; justify-content: center;
+  padding: 1.5rem; backdrop-filter: blur(6px);
+}
+.guide-modal {
+  background: linear-gradient(145deg, hsl(240,43%,19%), hsl(240,40%,13%));
+  border: 1px solid hsla(264,100%,75%,0.2); border-radius: 24px; padding: 2rem;
+  max-width: 560px; width: 100%; max-height: 85vh; overflow-y: auto;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.5); text-align: center; position: relative;
+}
+.guide-header { margin-bottom: 1.8rem; position: relative; }
+.guide-header h2 { font-family: var(--ff-display); color: var(--moon-text); font-size: 1.7rem; margin-bottom: 0.4rem; }
+.guide-header p { color: var(--moon-text-soft); font-size: 0.95rem; }
+.guide-close {
+  position: absolute; top: 0; right: 0;
+  color: var(--moon-text-soft); font-size: 1.1rem; padding: 0.3rem 0.6rem; transition: color 0.2s;
+}
+.guide-close:hover { color: var(--moon-text); }
+.guide-grid { display: flex; flex-direction: column; gap: 0.9rem; text-align: left; }
+.guide-item {
+  display: flex; align-items: flex-start; gap: 0.9rem; padding: 0.9rem 1rem;
+  background: hsla(264,100%,70%,0.07); border: 1px solid hsla(264,100%,75%,0.12); border-radius: 14px;
+}
+.guide-item-icon { font-size: 1.4rem; flex-shrink: 0; }
+.guide-item-title { font-weight: 600; color: var(--moon-text); font-size: 0.95rem; margin-bottom: 0.2rem; }
+.guide-item-desc { color: var(--moon-text-soft); font-size: 0.83rem; line-height: 1.5; }
+
+/* TAROT */
+.tarot-wrap { text-align: center; padding: 1.5rem 0; }
+.tarot-heading { color: var(--moon-text); font-size: 1.05rem; margin: 0.3rem 0 1.2rem; font-weight: 500; }
+.tarot-draw-btn {
+  padding: 0.75rem 1.8rem;
+  background: linear-gradient(135deg, hsla(264,100%,70%,0.2), hsla(290,80%,65%,0.15));
+  border: 1px solid hsla(264,100%,75%,0.3); border-radius: 100px;
+  color: var(--moon-text); font-size: 0.95rem; font-weight: 600;
+  transition: all 0.3s var(--ease-expo); box-shadow: 0 4px 18px var(--moon-glow);
+}
+.tarot-draw-btn:hover { transform: translateY(-2px) scale(1.04); }
+.tarot-card {
+  background: linear-gradient(145deg, hsla(264,100%,70%,0.15), hsla(290,80%,65%,0.1));
+  border: 1px solid hsla(264,100%,75%,0.25); border-radius: 20px;
+  padding: 1.5rem 1.2rem; max-width: 280px; margin: 0 auto;
+}
+.tarot-emoji { font-size: 2.5rem; margin-bottom: 0.5rem; }
+.tarot-name { font-family: var(--ff-display); color: var(--moon-text); font-size: 1.15rem; font-weight: 600; margin-bottom: 0.5rem; }
+.tarot-meaning { color: var(--moon-text-soft); font-size: 0.88rem; line-height: 1.6; margin-bottom: 1rem; }
+.tarot-again { font-size: 0.82rem; color: var(--moon-accent1); padding: 0.4rem 1rem; border: 1px solid hsla(264,100%,75%,0.25); border-radius: 100px; transition: all 0.2s; }
+.tarot-again:hover { background: hsla(264,100%,70%,0.12); }
+
+/* MINI PLAYLIST */
+.mini-playlist-wrap { text-align: center; padding: 1rem 0; }
+.mini-playlist-toggle {
+  padding: 0.6rem 1.4rem; background: hsla(264,100%,70%,0.12);
+  border: 1px solid hsla(264,100%,75%,0.25); border-radius: 100px;
+  color: var(--moon-text); font-size: 0.9rem; font-weight: 600; transition: all 0.25s;
+}
+.mini-playlist-toggle:hover { background: hsla(264,100%,70%,0.2); }
+.mini-playlist-panel {
+  margin-top: 0.8rem; background: hsla(240,43%,18%,0.8);
+  border: 1px solid hsla(264,100%,75%,0.15); border-radius: 16px; overflow: hidden; text-align: left;
+}
+.mini-track {
+  display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1rem;
+  cursor: pointer; transition: background 0.2s; border-bottom: 1px solid hsla(264,100%,75%,0.08);
+}
+.mini-track:last-of-type { border-bottom: none; }
+.mini-track:hover { background: hsla(264,100%,70%,0.08); }
+.mini-track.playing { background: hsla(264,100%,70%,0.12); }
+.mini-track-icon { color: var(--moon-accent1); font-size: 0.85rem; flex-shrink: 0; }
+.mini-track-title { color: var(--moon-text); font-size: 0.88rem; font-weight: 500; }
+.mini-track-artist { color: var(--moon-text-soft); font-size: 0.78rem; }
+
+/* FRIENDS TOOLS */
+.friends-tools-section { padding: 3rem 0; }
+.friends-icons-row { display: flex; flex-direction: column; gap: 1.5rem; }
+.friend-icon-card {
+  background: linear-gradient(145deg, hsla(240,43%,20%,0.5), hsla(264,100%,70%,0.05));
+  border: 1px solid hsla(264,100%,75%,0.12); border-radius: 20px; padding: 1.5rem;
+}
+@media (min-width: 768px) {
+  .friends-icons-row { flex-direction: row; align-items: flex-start; gap: 1.2rem; }
+  .friend-icon-card { flex: 1; }
+}
