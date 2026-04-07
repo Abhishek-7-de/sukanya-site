@@ -1379,8 +1379,8 @@ function CosmicWorld({ onBack }) {
 ═══════════════════════════════════════════════ */
 const SPOTIFY_TRACKS = {
   landing: null,
-  love: "2znooFkKzDQ3mC8sWCFuG6",
-  moon: "0cYohCh24y1aMjJmcS9RBl",
+  love: "0cYohCh24y1aMjJmcS9RBl",
+  moon: "2znooFkKzDQ3mC8sWCFuG6",
   cosmic: "0cYohCh24y1aMjJmcS9RBl",
 };
 

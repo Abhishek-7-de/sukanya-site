@@ -47,7 +47,12 @@ button { font: inherit; cursor: pointer; }
 img { display: block; max-width: 100%; }
 
 .app-shell { min-height: 100vh; overflow-x: hidden; }
-.container { width: min(1180px, calc(100% - 32px)); margin: 0 auto; }
+.container { 
+  width: min(1180px, calc(100% - 2rem)); 
+  margin: 0 auto; 
+  padding: 0 clamp(0.5rem, 2vw, 1rem);
+  box-sizing: border-box;
+}
 .eyebrow, .mini-eyebrow {
   text-transform: uppercase;
   letter-spacing: 0.24em;
@@ -193,9 +198,13 @@ img { display: block; max-width: 100%; }
     0 16px 40px rgba(0, 0, 0, 0.2),
     inset 0 1px 0 rgba(255, 255, 255, 0.1);
   padding: 1rem;
-  min-height: 420px;
+  min-height: auto;
   position: relative;
   overflow: hidden;
+}
+
+@media (max-width: 768px) {
+  .hero-visual { min-height: auto; padding: 0.75rem; }
 }
 .hero-visual::before {
   content: '';
@@ -270,10 +279,13 @@ img { display: block; max-width: 100%; }
 
 /* World Sections */
 .world-section {
-  min-height: 100vh;
-  padding: 2rem 0;
+  min-height: 100dvh;
+  padding: 2rem clamp(0.75rem, 4vw, 2rem);
   position: relative;
-  overflow: hidden;
+  overflow-x: hidden;
+  width: 100%;
+  max-width: 100vw;
+  box-sizing: border-box;
 }
 
 .lover-background {
@@ -895,7 +907,7 @@ img { display: block; max-width: 100%; }
   font-size: 0.75rem;
 }
 
-.world-section { position: relative; min-height: 100vh; padding: 1rem 0 1.75rem; overflow: hidden; }
+.world-section { position: relative; min-height: 100dvh; padding: 1rem 0 1.75rem; overflow-x: hidden; width: 100%; max-width: 100vw; }
 .lover-background { background: radial-gradient(circle at top, #fff1ea, #f6ddd7 35%, #efd8e1 72%, #e8d0d8 100%); }
 .friend-background { background: linear-gradient(180deg, #fffaf6 0%, #fff1ea 45%, #fff8f2 100%); }
 .world-content { position: relative; z-index: 2; }
