@@ -284,7 +284,7 @@ img { display: block; max-width: 100%; }
   position: relative;
   overflow-x: hidden;
   width: 100%;
-  max-width: 100vw;
+  max-width: 100%;
   box-sizing: border-box;
 }
 
@@ -907,7 +907,7 @@ img { display: block; max-width: 100%; }
   font-size: 0.75rem;
 }
 
-.world-section { position: relative; min-height: 100dvh; padding: 1rem 0 1.75rem; overflow-x: hidden; width: 100%; max-width: 100vw; }
+.world-section { position: relative; min-height: 100dvh; padding: 1rem 0 1.75rem; overflow-x: hidden; width: 100%; max-width: 100%; }
 .lover-background { background: radial-gradient(circle at top, #fff1ea, #f6ddd7 35%, #efd8e1 72%, #e8d0d8 100%); }
 .friend-background { background: linear-gradient(180deg, #fffaf6 0%, #fff1ea 45%, #fff8f2 100%); }
 .world-content { position: relative; z-index: 2; }

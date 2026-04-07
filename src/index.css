@@ -1,6 +1,7 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
-body { overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+html { scroll-behavior: smooth; overflow-x: hidden; }
+body { overflow-x: hidden; -webkit-font-smoothing: antialiased; width: 100%; }
+#root { width: 100%; min-height: 100dvh; overflow-x: hidden; }
 img { display: block; max-width: 100%; }
 button { background: none; border: none; cursor: pointer; font: inherit; color: inherit; }
 input, textarea, select { font: inherit; }

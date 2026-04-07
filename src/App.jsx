@@ -1415,6 +1415,16 @@ export default function App() {
         ?
       </button>
 
+      {/* GLOBAL BACK BUTTON */}
+      {world !== "landing" && (
+        <button
+          className="global-back-fab"
+          onClick={() => { playSound("click"); setWorld(world === "cosmic" ? "moon" : "landing"); }}
+        >
+          ← Back
+        </button>
+      )}
+
       {world !== "landing" && <SpotifyWidget key={world} trackId={SPOTIFY_TRACKS[world]} />}
 
       <AnimatePresence mode="wait">
