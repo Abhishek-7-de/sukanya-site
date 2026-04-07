@@ -545,6 +545,12 @@ function LandingPage({ onChoose }) {
           Something small was made for you.<br />Where do you want to go?
         </motion.p>
 
+        <div className="landing-ticker-wrap">
+          <div className="landing-ticker">
+            {"✨ made for you · 💌 honest & soft · 🌸 something small · 💫 just for you · 🦋 butterflies · 🌙 late night energy · ".repeat(6)}
+          </div>
+        </div>
+
         <motion.div
           className="landing-choices"
           initial={{ opacity: 0, y: 20 }}
@@ -794,6 +800,9 @@ function LovePage({ onBack, onNavigate }) {
           ))}
         </div>
       </section>
+
+      {/* HEARTBEAT ON LOVE PAGE */}
+      <div id="heartbeat"><HeartbeatMonitor /></div>
 
       {/* ALWAYS GOT YOUR BACK */}
       <section className="got-your-back content">
@@ -1053,6 +1062,18 @@ function MoonlightWorld({ onNavigate }) {
           </motion.p>
         </div>
       </section>
+
+      {/* TICKER STRIP */}
+      <div className="moon-ticker-wrap">
+        <div className="moon-ticker">
+          {"🌸 her world · ✨ real moments · 💫 vibes only · 🌙 candid gold · 💕 softness is strength · 🎵 good playlists · ☕ chai hours · ".repeat(5)}
+        </div>
+      </div>
+      <div className="moon-ticker-wrap" style={{ marginTop: "1px" }}>
+        <div className="moon-ticker moon-ticker-reverse">
+          {"💌 she deserves this · 🦋 just like that · 🌊 late nights · ⭐ one of one · 🎴 tarot vibes · 💬 actually listens · ".repeat(5)}
+        </div>
+      </div>
 
       {/* FRIENDS TOOLS — small icon row */}
       <section className="friends-tools-section content" id="tools">
