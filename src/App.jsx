@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import "./App.css";
+import "./premium.css";
 
 /* ═══════════════════════════════════════════════
    SOUND ENGINE
@@ -320,7 +321,15 @@ function CursorTrail({ color }) {
 ═══════════════════════════════════════════════ */
 function StarCanvas({ variant = "moon" }) {
   const canvasRef = useRef(null);
+  const mouseRef = useRef({ targetX: 0, targetY: 0, currentX: 0, currentY: 0 });
+
   useEffect(() => {
+    const handleMouseMove = (e) => {
+      mouseRef.current.targetX = (e.clientX / window.innerWidth - 0.5) * 60;
+      mouseRef.current.targetY = (e.clientY / window.innerHeight - 0.5) * 60;
+    };
+    window.addEventListener("mousemove", handleMouseMove);
+
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
@@ -332,6 +341,7 @@ function StarCanvas({ variant = "moon" }) {
       x: Math.random() * canvas.width, y: Math.random() * canvas.height,
       r: Math.random() * 1.8 + 0.2, alpha: Math.random(),
       speed: Math.random() * 0.004 + 0.001,
+      parallaxFactor: Math.random() * 1.5 + 0.5,
       color: variant === "cosmic"
         ? (Math.random() > 0.7 ? `hsl(190,100%,${70 + Math.random() * 20}%)` : Math.random() > 0.5 ? `hsl(45,100%,${65 + Math.random() * 20}%)` : "#fff")
         : `hsl(${240 + Math.random() * 60},80%,${80 + Math.random() * 15}%)`,
@@ -339,15 +349,32 @@ function StarCanvas({ variant = "moon" }) {
     let t = 0;
     const draw = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height); t += 0.01;
+      
+      mouseRef.current.currentX += (mouseRef.current.targetX - mouseRef.current.currentX) * 0.05;
+      mouseRef.current.currentY += (mouseRef.current.targetY - mouseRef.current.currentY) * 0.05;
+
       stars.forEach(s => {
         s.alpha = 0.3 + 0.5 * Math.abs(Math.sin(t * s.speed * 50 + s.x));
-        ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+        // Infinite tiling handling for x and parallax combined is tricky, so we just clamp or let it overlap
+        // A simple wrap around:
+        let px = s.x + mouseRef.current.currentX * s.parallaxFactor;
+        let py = s.y + mouseRef.current.currentY * s.parallaxFactor;
+        if (px > canvas.width + 10) px -= canvas.width + 20;
+        if (px < -10) px += canvas.width + 20;
+        if (py > canvas.height + 10) py -= canvas.height + 20;
+        if (py < -10) py += canvas.height + 20;
+
+        ctx.beginPath(); ctx.arc(px, py, s.r, 0, Math.PI * 2);
         ctx.fillStyle = s.color; ctx.globalAlpha = s.alpha; ctx.fill();
       });
       ctx.globalAlpha = 1; animId = requestAnimationFrame(draw);
     };
     draw();
-    return () => { cancelAnimationFrame(animId); window.removeEventListener("resize", resize); };
+    return () => { 
+      cancelAnimationFrame(animId); 
+      window.removeEventListener("resize", resize); 
+      window.removeEventListener("mousemove", handleMouseMove);
+    };
   }, [variant]);
   return <canvas ref={canvasRef} className={variant === "cosmic" ? "cosmic-canvas" : "canvas-bg"} aria-hidden />;
 }
@@ -1384,10 +1411,36 @@ const SPOTIFY_TRACKS = {
   cosmic: "0cYohCh24y1aMjJmcS9RBl",
 };
 
+import Lenis from '@studio-freight/lenis';
+
 export default function App() {
   const [world, setWorld] = useState("landing");
   const [showLetter, setShowLetter] = useState(true);
   const [showGuide, setShowGuide] = useState(false);
+
+  useEffect(() => {
+    const lenis = new Lenis({
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), 
+      direction: 'vertical',
+      gestureDirection: 'vertical',
+      smooth: true,
+      mouseMultiplier: 1,
+      smoothTouch: false,
+      touchMultiplier: 2,
+      infinite: false,
+    });
+
+    function raf(time) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
+    requestAnimationFrame(raf);
+
+    return () => {
+      lenis.destroy();
+    };
+  }, []);
 
   return (
     <>
