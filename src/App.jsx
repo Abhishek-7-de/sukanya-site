@@ -643,7 +643,7 @@ function LandingPage({ onChoose }) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
         >
-          Hey, <em>Sukanya</em>.
+          Hey, <em className="name-butterfly">Sukanya</em>.
         </motion.h1>
 
         <motion.p

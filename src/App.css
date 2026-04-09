@@ -1307,7 +1307,7 @@ textarea.form-input { resize: vertical; min-height: 100px; }
 .landing-choice-btn {
   width: 100%; 
   max-width: clamp(260px, 95vw, 360px);
-  padding: clamp(0.9rem, 3.5vw, 1.4rem) clamp(1.2rem, 4vw, 2rem);
+  padding: clamp(1rem, 4vw, 1.4rem) clamp(1rem, 4vw, 2rem);
   border-radius: 20px; 
   display: flex; 
   flex-direction: column; 
@@ -1317,29 +1317,29 @@ textarea.form-input { resize: vertical; min-height: 100px; }
   text-align: left;
   word-wrap: break-word;
   overflow-wrap: break-word;
-  backdrop-filter: blur(12px) saturate(180%);
+  backdrop-filter: blur(8px);
 }
 .landing-choice-love {
-  background: linear-gradient(135deg, hsla(350,80%,70%,0.15), hsla(290,80%,65%,0.08));
-  border: 1.2px solid hsla(350,80%,75%,0.25);
-  box-shadow: 0 8px 32px hsla(350,80%,50%,0.15);
+  background: linear-gradient(135deg, hsla(350,80%,70%,0.04), transparent);
+  border: 1px solid hsla(350,80%,75%,0.15);
+  box-shadow: 0 4px 20px hsla(350,80%,50%,0.05);
 }
 .landing-choice-love:hover {
   transform: translateY(-5px) scale(1.03);
-  background: linear-gradient(135deg, hsla(350,80%,70%,0.25), hsla(290,80%,65%,0.15));
-  border-color: hsla(350,80%,75%,0.5);
-  box-shadow: 0 20px 50px hsla(350,80%,50%,0.35);
+  background: linear-gradient(135deg, hsla(350,80%,70%,0.1), hsla(290,80%,65%,0.05));
+  border-color: hsla(350,80%,75%,0.3);
+  box-shadow: 0 15px 40px hsla(350,80%,50%,0.2);
 }
 .landing-choice-friends {
-  background: linear-gradient(135deg, hsla(264,100%,75%,0.12), hsla(210,60%,85%,0.08));
-  border: 1.2px solid hsla(264,100%,75%,0.2);
-  box-shadow: 0 8px 32px hsla(264,100%,60%,0.12);
+  background: linear-gradient(135deg, hsla(264,100%,75%,0.04), transparent);
+  border: 1px solid hsla(264,100%,75%,0.15);
+  box-shadow: 0 4px 20px hsla(264,100%,60%,0.05);
 }
 .landing-choice-friends:hover {
   transform: translateY(-5px) scale(1.03);
-  background: linear-gradient(135deg, hsla(264,100%,75%,0.22), hsla(210,60%,85%,0.15));
-  border-color: hsla(264,100%,75%,0.5);
-  box-shadow: 0 20px 50px hsla(264,100%,60%,0.3);
+  background: linear-gradient(135deg, hsla(264,100%,75%,0.1), hsla(210,60%,85%,0.05));
+  border-color: hsla(264,100%,75%,0.3);
+  box-shadow: 0 15px 40px hsla(264,100%,60%,0.2);
 }
 .choice-icon { font-size: 1.6rem; }
 .choice-label { font-size: 1.05rem; font-weight: 600; color: var(--moon-text); }
@@ -1571,7 +1571,7 @@ textarea.form-input { resize: vertical; min-height: 100px; }
   color: var(--moon-text); font-size: 0.95rem; font-weight: 600;
   transition: all 0.3s var(--ease-expo); box-shadow: 0 4px 18px var(--moon-glow);
 }
-.tarot-draw-btn:hover { transform: translateY(-2px) scale(1.04); }
+.tarot-draw-btn:hover { transform: translateY(-2px) scale(1.04); background: hsla(264,100%,70%,0.2); }
 .tarot-card {
   background: linear-gradient(145deg, hsla(264,100%,70%,0.15), hsla(290,80%,65%,0.1));
   border: 1px solid hsla(264,100%,75%,0.25); border-radius: 20px;
@@ -1586,7 +1586,7 @@ textarea.form-input { resize: vertical; min-height: 100px; }
 /* MINI PLAYLIST */
 .mini-playlist-wrap { text-align: center; padding: 1rem 0; }
 .mini-playlist-toggle {
-  padding: 0.6rem 1.4rem; background: hsla(264,100%,70%,0.12);
+  padding: 0.6rem 1.4rem; background: transparent;
   border: 1px solid hsla(264,100%,75%,0.25); border-radius: 100px;
   color: var(--moon-text); font-size: 0.9rem; font-weight: 600; transition: all 0.25s;
 }
@@ -2247,3 +2247,37 @@ html, body, #root {
   transition: 0.3s;
 }
 .vault-close:hover { color: var(--moon-accent1); transform: rotate(90deg); }
+
+/* BUTTERFLY NAME EFFECT */
+.name-butterfly {
+  position: relative;
+  display: inline-block;
+  color: var(--moon-accent1);
+  text-shadow: 0 0 15px hsla(350,90%,70%,0.6);
+  font-style: italic;
+}
+.name-butterfly::before, .name-butterfly::after {
+  content: '🦋';
+  position: absolute;
+  font-size: 0.8rem;
+  opacity: 0;
+  pointer-events: none;
+  animation: flutter 4.5s infinite ease-in-out;
+}
+.name-butterfly::before {
+  top: -12px; left: -18px;
+  animation-delay: 0s;
+}
+.name-butterfly::after {
+  bottom: -6px; right: -22px;
+  animation-delay: 2.2s;
+  font-size: 0.65rem;
+}
+
+@keyframes flutter {
+  0% { transform: translate(0, 0) scale(0.8) rotate(-15deg); opacity: 0; filter: blur(2px); }
+  20% { opacity: 1; filter: blur(0px); }
+  50% { transform: translate(8px, -18px) scale(1.1) rotate(10deg); opacity: 0.85; filter: blur(0px); }
+  80% { opacity: 0; filter: blur(1px); }
+  100% { transform: translate(12px, -24px) scale(0.9) rotate(20deg); opacity: 0; }
+}
