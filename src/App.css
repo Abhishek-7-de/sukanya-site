@@ -1302,13 +1302,13 @@ textarea.form-input { resize: vertical; min-height: 100px; }
   font-size: 1.05rem; line-height: 1.65; margin-bottom: 2.5rem;
 }
 .landing-choices {
-  display: flex; flex-direction: column; gap: 0.8rem; align-items: center;
+  display: flex; flex-direction: column; gap: 0.6rem; align-items: center;
 }
 .landing-choice-btn {
-  width: 100%; 
-  max-width: clamp(240px, 85vw, 320px);
-  padding: 0.95rem 1.25rem;
-  border-radius: 18px; 
+  width: auto; 
+  min-width: clamp(180px, 70vw, 220px);
+  padding: 0.7rem 1rem;
+  border-radius: 24px; 
   display: flex; 
   flex-direction: column; 
   align-items: flex-start;
@@ -1697,11 +1697,12 @@ html, body, #root {
 .landing-ticker-wrap {
   width: 100%;
   overflow: hidden;
-  margin: 1rem 0 2rem;
+  margin: 0.2rem 0 1rem;
   position: relative;
-  background: transparent;
-  backdrop-filter: none;
-  border: none;
+  background: transparent !important;
+  backdrop-filter: none !important;
+  border: none !important;
+  box-shadow: none !important;
 }
 .landing-ticker-wrap::before,
 .landing-ticker-wrap::after {
@@ -2279,14 +2280,19 @@ html, body, #root {
   position: relative;
   display: inline-block;
   color: #fff;
+  font-size: 1.5em;
   text-shadow: 
-    0 0 20px hsla(264, 100%, 85%, 1),
-    0 0 40px hsla(264, 100%, 75%, 0.8),
-    0 0 80px hsla(264, 100%, 65%, 0.6),
-    0 0 120px hsla(264, 100%, 60%, 0.4);
+    0 0 15px hsla(264, 100%, 95%, 1),
+    0 0 35px hsla(264, 100%, 85%, 0.8),
+    0 0 70px hsla(264, 100%, 75%, 0.6);
   font-style: italic;
-  font-weight: 800;
-  letter-spacing: 0.02em;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  background: linear-gradient(to bottom, #fff, #f0e6ff);
+  -webkit-background-clip: text;
+  background-clip: text;
+  line-height: 1;
+  padding: 0 0.1em;
 }
 .name-butterfly::before, .name-butterfly::after {
   content: '🦋';

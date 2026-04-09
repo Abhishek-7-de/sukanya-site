@@ -890,7 +890,7 @@ function LandingPage({ onChoose }) {
           style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: fade }}
           src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260328_083109_283f3553-e28f-428b-a723-d639c617eb2b.mp4"
         />
-        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, transparent, rgba(15, 10, 30, 0.9))' }} />
+        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, transparent 40%, rgba(15, 10, 30, 0.7) 100%)' }} />
       </div>
       <StarCanvas variant="moon" />
       <CursorTrail color="hsla(264,100%,75%,0.8)" />
