@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import "./App.css";
 import "./premium.css";
@@ -41,6 +41,11 @@ function playSound(type) {
         g.gain.setValueAtTime(0.18, ctx.currentTime);
         g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.18);
         o.start(); o.stop(ctx.currentTime + 0.2);
+      } else if (type === "hover") {
+        o.type = "sine"; o.frequency.value = 1200;
+        g.gain.setValueAtTime(0.015, ctx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.05);
+        o.start(); o.stop(ctx.currentTime + 0.06);
       } else if (type === "success") {
         [523, 659, 784].forEach((f, i) => {
           const oo = ctx.createOscillator(), gg = ctx.createGain();
@@ -54,6 +59,118 @@ function playSound(type) {
       }
     }
   } catch (_) {}
+}
+
+/* ═══════════════════════════════════════════════
+   HAPTIC ENGINE (Phone vibration patterns)
+═══════════════════════════════════════════════ */
+function haptic(pattern = "light") {
+  if (!navigator.vibrate) return;
+  const patterns = {
+    light:   [10],
+    medium:  [30],
+    heavy:   [60],
+    success: [20, 30, 20],
+    error:   [50, 30, 50, 30, 80],
+    double:  [20, 50, 20],
+    heart:   [15, 80, 25, 80, 15],
+  };
+  navigator.vibrate(patterns[pattern] || [10]);
+}
+
+/* ═══════════════════════════════════════════════
+   TOUCH RIPPLE HOOK
+═══════════════════════════════════════════════ */
+function useTouchRipple() {
+  const [ripples, setRipples] = useState([]);
+  const addRipple = (e) => {
+    const el = e.currentTarget;
+    const rect = el.getBoundingClientRect();
+    const touch = e.touches ? e.touches[0] : e;
+    const x = (touch.clientX - rect.left) / rect.width * 100;
+    const y = (touch.clientY - rect.top) / rect.height * 100;
+    const id = Date.now() + Math.random();
+    setRipples(r => [...r, { id, x, y }]);
+    setTimeout(() => setRipples(r => r.filter(rp => rp.id !== id)), 700);
+  };
+  return [ripples, addRipple];
+}
+
+/* ═══════════════════════════════════════════════
+   DEVICE TILT PARALLAX HOOK
+═══════════════════════════════════════════════ */
+function useDeviceTilt() {
+  const [tilt, setTilt] = useState({ x: 0, y: 0 });
+  useEffect(() => {
+    const handler = (e) => {
+      const x = (e.gamma || 0) / 30;
+      const y = (e.beta  || 0) / 60;
+      setTilt({ x: Math.max(-1, Math.min(1, x)), y: Math.max(-1, Math.min(1, y)) });
+    };
+    if (typeof DeviceOrientationEvent !== "undefined") {
+      if (typeof DeviceOrientationEvent.requestPermission !== "function") {
+        window.addEventListener("deviceorientation", handler);
+      }
+    }
+    return () => window.removeEventListener("deviceorientation", handler);
+  }, []);
+  return tilt;
+}
+
+/* ═══════════════════════════════════════════════
+   SHAKE DETECTION HOOK
+═══════════════════════════════════════════════ */
+function useShakeDetection(onShake, threshold = 15) {
+  const lastAcc = useRef({ x: 0, y: 0, z: 0 });
+  const lastTime = useRef(0);
+  useEffect(() => {
+    const fn = onShake;
+    const handler = (e) => {
+      const now = Date.now();
+      if (now - lastTime.current < 400) return;
+      const { x, y, z } = e.accelerationIncludingGravity || {};
+      if (x == null) return;
+      const dx = Math.abs(x - lastAcc.current.x);
+      const dy = Math.abs(y - lastAcc.current.y);
+      const dz = Math.abs(z - lastAcc.current.z);
+      if (dx + dy + dz > threshold) { lastTime.current = now; fn(); }
+      lastAcc.current = { x, y, z };
+    };
+    window.addEventListener("devicemotion", handler);
+    return () => window.removeEventListener("devicemotion", handler);
+  }, [onShake, threshold]);
+}
+
+/* ═══════════════════════════════════════════════
+   MAGNETIC WRAPPER
+   (Adds that premium "sticky" feeling to buttons)
+═══════════════════════════════════════════════ */
+function Magnetic({ children, strength = 0.35 }) {
+  const ref = useRef(null);
+  const [pos, setPos] = useState({ x: 0, y: 0 });
+  // Skip magnetic effect on touch/mobile devices
+  const isTouch = typeof window !== "undefined" && window.matchMedia("(pointer: coarse)").matches;
+  const handleMouse = (e) => {
+    if (!ref.current) return;
+    const { clientX, clientY } = e;
+    const { height, width, left, top } = ref.current.getBoundingClientRect();
+    const x = (clientX - (left + width / 2)) * strength;
+    const y = (clientY - (top + height / 2)) * strength;
+    setPos({ x, y });
+  };
+  const reset = () => setPos({ x: 0, y: 0 });
+  if (isTouch) return <>{children}</>;
+  return (
+    <motion.div
+      ref={ref}
+      onMouseMove={handleMouse}
+      onMouseLeave={reset}
+      animate={{ x: pos.x, y: pos.y }}
+      transition={{ type: "spring", stiffness: 150, damping: 15, mass: 0.1 }}
+    >
+      {children}
+    </motion.div>
+  );
 }
 
 /* ═══════════════════════════════════════════════
@@ -576,7 +693,23 @@ function FunWaterTracker() {
 function LandingPage({ onChoose }) {
   const [fade, setFade] = useState(1);
   const v1 = useRef();
-  const v2 = useRef();
+  const [shakeMsg, setShakeMsg] = useState(null);
+  const [ripples1, addRipple1] = useTouchRipple();
+  const [ripples2, addRipple2] = useTouchRipple();
+  const tilt = useDeviceTilt();
+
+  const SHAKE_MSGS = [
+    "you shook me 🦋", "steady there ✨", "feeling that energy 💫",
+    "boo! 👻", "hey careful 🌸", "ok ok 🌙",
+  ];
+
+  const onShake = useCallback(() => {
+    haptic("double");
+    setShakeMsg(SHAKE_MSGS[Math.floor(Math.random() * SHAKE_MSGS.length)]);
+    setTimeout(() => setShakeMsg(null), 2200);
+  }, []);
+
+  useShakeDetection(onShake);
 
   useEffect(() => {
     const vid1 = v1.current;
@@ -627,6 +760,40 @@ function LandingPage({ onChoose }) {
       <StarCanvas variant="moon" />
       <CursorTrail color="hsla(264,100%,75%,0.8)" />
 
+      {/* Shake surprise toast */}
+      <AnimatePresence>
+        {shakeMsg && (
+          <motion.div className="shake-toast"
+            initial={{ opacity: 0, y: -30, scale: 0.85 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -20, scale: 0.9 }}
+          >{shakeMsg}</motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Gyroscope-parallax floating elements */}
+      <motion.div className="floating-element" style={{ top: '15%', left: '10%' }}
+        animate={{ y: tilt.y * -22, x: tilt.x * 18 }}
+        transition={{ type: "spring", stiffness: 40, damping: 12 }}
+      >✨</motion.div>
+      <motion.div className="floating-element" style={{ top: '65%', left: '5%' }}
+        animate={{ y: tilt.y * 20, x: tilt.x * 10 }}
+        transition={{ type: "spring", stiffness: 25, damping: 8 }}
+      >🌸</motion.div>
+      <motion.div className="floating-element" style={{ top: '20%', right: '12%' }}
+        animate={{ y: tilt.y * -28, x: tilt.x * -18 }}
+        transition={{ type: "spring", stiffness: 30, damping: 9 }}
+      >💫</motion.div>
+      <motion.div className="floating-element" style={{ bottom: '18%', right: '10%' }}
+        animate={{ y: tilt.y * 15, x: tilt.x * -12 }}
+        transition={{ type: "spring", stiffness: 20, damping: 7 }}
+      >🦋</motion.div>
+
+      {/* Shake hint — fades in after 3s, mobile only */}
+      <motion.p className="shake-hint"
+        initial={{ opacity: 0 }} animate={{ opacity: 0.5 }} transition={{ delay: 3, duration: 1.2 }}
+      >📳 shake for a surprise</motion.p>
+
       <div className="landing-center">
         <motion.div
           className="landing-letter-deco"
@@ -663,27 +830,51 @@ function LandingPage({ onChoose }) {
 
         <motion.div
           className="landing-choices"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.5 }}
+          initial="hidden"
+          animate="visible"
+          variants={{
+            hidden: { opacity: 0 },
+            visible: {
+              opacity: 1,
+              transition: { staggerChildren: 0.15, delayChildren: 0.5 }
+            }
+          }}
         >
-          <button
-            className="landing-choice-btn landing-choice-love"
-            onClick={() => { playSound("click"); onChoose("love"); }}
-          >
-            <span className="choice-icon">💌</span>
-            <span className="choice-label">The Personal Side</span>
-            <span className="choice-hint">A little honest, a little soft</span>
-          </button>
+          <Magnetic strength={0.4}>
+            <motion.button
+              className="landing-choice-btn landing-choice-love ripple-btn"
+              variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
+              whileTap={{ scale: 0.96 }}
+              onTouchStart={(e) => { addRipple1(e); haptic("light"); }}
+              onMouseEnter={() => playSound("hover")}
+              onClick={() => { playSound("click"); haptic("medium"); onChoose("love"); }}
+            >
+              {ripples1.map(r => (
+                <span key={r.id} className="touch-ripple" style={{ left: `${r.x}%`, top: `${r.y}%` }} />
+              ))}
+              <span className="choice-icon">💌</span>
+              <span className="choice-label">The Personal Side</span>
+              <span className="choice-hint">A little honest, a little soft</span>
+            </motion.button>
+          </Magnetic>
 
-          <button
-            className="landing-choice-btn landing-choice-friends"
-            onClick={() => { playSound("click"); onChoose("moon"); }}
-          >
-            <span className="choice-icon">🌸</span>
-            <span className="choice-label">Her World</span>
-            <span className="choice-hint">Memories, vibes &amp; her people</span>
-          </button>
+          <Magnetic strength={0.4}>
+            <motion.button
+              className="landing-choice-btn landing-choice-friends ripple-btn"
+              variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
+              whileTap={{ scale: 0.96 }}
+              onTouchStart={(e) => { addRipple2(e); haptic("light"); }}
+              onMouseEnter={() => playSound("hover")}
+              onClick={() => { playSound("click"); haptic("medium"); onChoose("moon"); }}
+            >
+              {ripples2.map(r => (
+                <span key={r.id} className="touch-ripple" style={{ left: `${r.x}%`, top: `${r.y}%` }} />
+              ))}
+              <span className="choice-icon">🌸</span>
+              <span className="choice-label">Her World</span>
+              <span className="choice-hint">Memories, vibes &amp; her people</span>
+            </motion.button>
+          </Magnetic>
         </motion.div>
       </div>
     </div>

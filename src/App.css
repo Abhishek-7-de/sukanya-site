@@ -1341,9 +1341,24 @@ textarea.form-input { resize: vertical; min-height: 100px; }
   border-color: hsla(264,100%,75%,0.3);
   box-shadow: 0 15px 40px hsla(264,100%,60%,0.2);
 }
-.choice-icon { font-size: 1.6rem; }
+.choice-icon { font-size: 1.6rem; transition: transform 0.4s var(--ease-elastic); }
+.landing-choice-btn:hover .choice-icon { transform: scale(1.2) rotate(10deg); }
 .choice-label { font-size: 1.05rem; font-weight: 600; color: var(--moon-text); }
 .choice-hint { font-size: 0.82rem; color: var(--moon-text-soft); }
+
+/* Floating Decorative Symbols */
+.floating-element {
+  position: absolute;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.2;
+  font-size: 1.5rem;
+}
+@keyframes float-pattern {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  33% { transform: translate(30px, -50px) rotate(120deg); }
+  66% { transform: translate(-20px, 20px) rotate(240deg); }
+}
 
 /* LOVE PAGE GATE */
 .love-gate {
@@ -1682,12 +1697,12 @@ html, body, #root {
 .landing-ticker-wrap {
   width: 100%;
   overflow: hidden;
-  margin: 1.2rem 0 2.2rem;
+  margin: 1.5rem 0 2.5rem;
   position: relative;
-  background: hsla(264, 40%, 10%, 0.4);
-  backdrop-filter: blur(8px);
-  border-top: 1px solid hsla(264, 100%, 75%, 0.1);
-  border-bottom: 1px solid hsla(264, 100%, 75%, 0.1);
+  background: transparent;
+  backdrop-filter: none;
+  border-top: 1px solid hsla(264, 100%, 75%, 0.05);
+  border-bottom: 1px solid hsla(264, 100%, 75%, 0.05);
 }
 .landing-ticker-wrap::before,
 .landing-ticker-wrap::after {
@@ -1700,11 +1715,11 @@ html, body, #root {
 }
 .landing-ticker-wrap::before {
   left: 0;
-  background: linear-gradient(to right, var(--moon-bg2), transparent);
+  background: linear-gradient(to right, transparent, transparent);
 }
 .landing-ticker-wrap::after {
   right: 0;
-  background: linear-gradient(to left, var(--moon-bg2), transparent);
+  background: linear-gradient(to left, transparent, transparent);
 }
 .landing-ticker {
   display: flex;
@@ -2252,9 +2267,14 @@ html, body, #root {
 .name-butterfly {
   position: relative;
   display: inline-block;
-  color: var(--moon-accent1);
-  text-shadow: 0 0 15px hsla(350,90%,70%,0.6);
+  color: #fff;
+  text-shadow: 
+    0 0 10px hsla(264, 100%, 75%, 0.8),
+    0 0 25px hsla(264, 100%, 75%, 0.4),
+    0 0 40px hsla(264, 100%, 75%, 0.2);
   font-style: italic;
+  font-weight: 700;
+  letter-spacing: 0.02em;
 }
 .name-butterfly::before, .name-butterfly::after {
   content: '🦋';
@@ -2273,6 +2293,7 @@ html, body, #root {
   animation-delay: 2.2s;
   font-size: 0.65rem;
 }
+}
 
 @keyframes flutter {
   0% { transform: translate(0, 0) scale(0.8) rotate(-15deg); opacity: 0; filter: blur(2px); }
@@ -2280,4 +2301,139 @@ html, body, #root {
   50% { transform: translate(8px, -18px) scale(1.1) rotate(10deg); opacity: 0.85; filter: blur(0px); }
   80% { opacity: 0; filter: blur(1px); }
   100% { transform: translate(12px, -24px) scale(0.9) rotate(20deg); opacity: 0; }
+}
+
+/* ═══════════════════════════════════════════════════
+   MOBILE-FIRST ENGAGEMENT FEATURES
+═══════════════════════════════════════════════════ */
+
+/* Touch Ripple Effect */
+.ripple-btn {
+  position: relative;
+  overflow: hidden;
+}
+.touch-ripple {
+  position: absolute;
+  transform: translate(-50%, -50%) scale(0);
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(264, 100%, 80%, 0.35), transparent 70%);
+  animation: ripple-expand 0.65s var(--ease-expo) forwards;
+  pointer-events: none;
+  z-index: 10;
+}
+@keyframes ripple-expand {
+  0%   { transform: translate(-50%, -50%) scale(0); opacity: 1; }
+  80%  { opacity: 0.5; }
+  100% { transform: translate(-50%, -50%) scale(2.5); opacity: 0; }
+}
+
+/* Shake Toast */
+.shake-toast {
+  position: fixed;
+  top: 5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  background: hsla(264, 80%, 15%, 0.92);
+  border: 1px solid hsla(264, 100%, 75%, 0.3);
+  border-radius: 100px;
+  padding: 0.65rem 1.6rem;
+  color: var(--moon-accent1);
+  font-size: 0.9rem;
+  font-weight: 600;
+  font-family: var(--ff-mono);
+  letter-spacing: 0.06em;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 8px 32px hsla(264, 100%, 60%, 0.3);
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+/* Shake Hint — shows only on mobile */
+.shake-hint {
+  position: fixed;
+  bottom: calc(13rem + env(safe-area-inset-bottom, 0px));
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  font-size: 0.7rem;
+  color: hsla(264, 80%, 80%, 0.5);
+  font-family: var(--ff-mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  pointer-events: none;
+  white-space: nowrap;
+}
+@media (min-width: 769px) {
+  .shake-hint { display: none; }
+}
+
+/* Floating elements — bigger on mobile for visibility */
+.floating-element {
+  font-size: 2rem;
+}
+@media (max-width: 480px) {
+  .floating-element {
+    font-size: 1.8rem;
+    opacity: 0.25;
+  }
+}
+
+/* Phone-optimized touch targets — minimum 56px hit areas */
+@media (pointer: coarse) {
+  .landing-choice-btn {
+    min-height: 72px;
+    padding: 1.2rem 1.4rem;
+    border-radius: 22px;
+    /* Remove hover styles that don't work on touch */
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .landing-choice-btn:active {
+    transform: scale(0.97);
+  }
+  .btn-heartbeat {
+    min-height: 56px;
+    padding: 1rem 2rem;
+  }
+  .water-glass-btn {
+    min-height: 56px;
+    min-width: 44px;
+  }
+  .global-sos {
+    width: 60px;
+    height: 60px;
+    font-size: 1.5rem;
+  }
+  /* Remove cursor trail on touch */
+  .cursor-dot { display: none; }
+  /* Remove desktop hover effects that feel janky on touch */
+  .world-portal:hover { transform: none; }
+  .photo-item:hover { transform: none; }
+}
+
+/* Safe area padding for modern phones (notch / home bar) */
+.landing-center {
+  padding-bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px));
+  padding-top: calc(1.5rem + env(safe-area-inset-top, 0px));
+}
+
+/* Prevent text selection on interactive elements (feels native) */
+.landing-choice-btn, .btn-heartbeat, .water-glass-btn, .global-sos {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+/* Smooth momentum scrolling on iOS */
+.w-moon, .w-blossom, .w-cosmic, .w-landing {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Better focus ring for accessibility on mobile */
+:focus-visible {
+  outline: 2px solid var(--moon-accent1);
+  outline-offset: 3px;
 }
