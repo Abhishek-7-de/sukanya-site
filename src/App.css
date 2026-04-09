@@ -4,41 +4,41 @@
    DESIGN TOKENS — 3 WORLD SYSTEM
 ═══════════════════════════════════════════════════ */
 :root {
-  /* WORLD 1: Moonlight Reverie */
-  --moon-bg:        hsl(240, 43%, 17%);
-  --moon-bg2:       hsl(240, 40%, 12%);
-  --moon-surface:   hsl(240, 35%, 22%);
-  --moon-border:    hsla(240, 60%, 75%, 0.15);
-  --moon-accent1:   hsl(264, 100%, 83%);
-  --moon-accent2:   hsl(210, 60%, 85%);
+  /* WORLD 1: Moonlight Reverie (Dark & Colorful) */
+  --moon-bg:        hsl(284, 85%, 8%);
+  --moon-bg2:       hsl(264, 90%, 6%);
+  --moon-surface:   hsl(280, 60%, 14%);
+  --moon-border:    hsla(264, 100%, 60%, 0.2);
+  --moon-accent1:   hsl(264, 100%, 75%);
+  --moon-accent2:   hsl(210, 80%, 75%);
   --moon-text:      hsl(240, 40%, 94%);
-  --moon-text-soft: hsla(240, 40%, 94%, 0.65);
-  --moon-glow:      hsla(264, 100%, 70%, 0.35);
+  --moon-text-soft: hsla(240, 40%, 94%, 0.7);
+  --moon-glow:      hsla(264, 100%, 70%, 0.4);
 
-  /* WORLD 2: Blossom Chronicles */
-  --blossom-bg:      hsl(20, 60%, 97%);
-  --blossom-bg2:     hsl(25, 50%, 94%);
-  --blossom-surface: hsl(20, 80%, 98%);
-  --blossom-border:  hsla(350, 70%, 65%, 0.2);
-  --blossom-coral:   hsl(0, 100%, 71%);
-  --blossom-rose:    hsl(18, 84%, 80%);
-  --blossom-cream:   hsl(40, 100%, 97%);
-  --blossom-text:    hsl(20, 30%, 20%);
-  --blossom-text-soft: hsla(20, 30%, 20%, 0.65);
-  --blossom-glow:    hsla(0, 100%, 71%, 0.25);
+  /* WORLD 2: Blossom Chronicles (Dark & Colorful) */
+  --blossom-bg:      hsl(350, 85%, 8%);
+  --blossom-bg2:     hsl(18, 90%, 6%);
+  --blossom-surface: hsl(350, 70%, 14%);
+  --blossom-border:  hsla(350, 100%, 60%, 0.2);
+  --blossom-coral:   hsl(350, 100%, 71%);
+  --blossom-rose:    hsl(18, 100%, 70%);
+  --blossom-cream:   hsl(40, 100%, 90%);
+  --blossom-text:    hsl(20, 30%, 98%);
+  --blossom-text-soft: hsla(20, 30%, 98%, 0.7);
+  --blossom-glow:    hsla(350, 100%, 71%, 0.4);
 
-  /* WORLD 3: Cosmic Dreams */
-  --cosmic-bg:       hsl(284, 85%, 10%);
+  /* WORLD 3: Cosmic Dreams (Dark & Colorful) */
+  --cosmic-bg:       hsl(190, 85%, 8%);
   --cosmic-bg2:      hsl(280, 90%, 6%);
-  --cosmic-surface:  hsl(280, 60%, 16%);
+  --cosmic-surface:  hsl(190, 60%, 14%);
   --cosmic-border:   hsla(190, 100%, 60%, 0.2);
-  --cosmic-cyan:     hsl(190, 100%, 50%);
-  --cosmic-gold:     hsl(45, 100%, 54%);
-  --cosmic-purple:   hsl(290, 80%, 65%);
+  --cosmic-cyan:     hsl(190, 100%, 55%);
+  --cosmic-gold:     hsl(45, 100%, 60%);
+  --cosmic-purple:   hsl(290, 90%, 65%);
   --cosmic-text:     hsl(210, 100%, 96%);
-  --cosmic-text-soft:hsla(210, 100%, 96%, 0.65);
-  --cosmic-glow-c:   hsla(190, 100%, 50%, 0.4);
-  --cosmic-glow-g:   hsla(45, 100%, 50%, 0.4);
+  --cosmic-text-soft:hsla(210, 100%, 96%, 0.7);
+  --cosmic-glow-c:   hsla(190, 100%, 55%, 0.5);
+  --cosmic-glow-g:   hsla(45, 100%, 60%, 0.5);
 
   /* SHARED */
   --ff-display: 'Playfair Display', Georgia, serif;
@@ -1305,30 +1305,41 @@ textarea.form-input { resize: vertical; min-height: 100px; }
   display: flex; flex-direction: column; gap: 1rem; align-items: center;
 }
 .landing-choice-btn {
-  width: 100%; max-width: clamp(260px, 95vw, 360px);
-  padding: clamp(0.8rem, 3vw, 1.2rem) clamp(1rem, 4vw, 1.8rem);
-  border-radius: 18px; display: flex; flex-direction: column; align-items: flex-start;
-  gap: 0.2rem; transition: all 0.35s var(--ease-expo); text-align: left;
+  width: 100%; 
+  max-width: clamp(260px, 95vw, 360px);
+  padding: clamp(0.9rem, 3.5vw, 1.4rem) clamp(1.2rem, 4vw, 2rem);
+  border-radius: 20px; 
+  display: flex; 
+  flex-direction: column; 
+  align-items: flex-start;
+  gap: 0.3rem; 
+  transition: all 0.4s var(--ease-expo); 
+  text-align: left;
   word-wrap: break-word;
   overflow-wrap: break-word;
+  backdrop-filter: blur(12px) saturate(180%);
 }
 .landing-choice-love {
-  background: linear-gradient(135deg, hsla(350,80%,60%,0.18), hsla(290,80%,65%,0.12));
-  border: 1px solid hsla(350,80%,65%,0.3);
-  box-shadow: 0 8px 30px hsla(350,80%,60%,0.15);
+  background: linear-gradient(135deg, hsla(350,80%,70%,0.15), hsla(290,80%,65%,0.08));
+  border: 1.2px solid hsla(350,80%,75%,0.25);
+  box-shadow: 0 8px 32px hsla(350,80%,50%,0.15);
 }
 .landing-choice-love:hover {
-  transform: translateY(-4px) scale(1.02);
-  box-shadow: 0 16px 40px hsla(350,80%,60%,0.25);
+  transform: translateY(-5px) scale(1.03);
+  background: linear-gradient(135deg, hsla(350,80%,70%,0.25), hsla(290,80%,65%,0.15));
+  border-color: hsla(350,80%,75%,0.5);
+  box-shadow: 0 20px 50px hsla(350,80%,50%,0.35);
 }
 .landing-choice-friends {
-  background: linear-gradient(135deg, hsla(264,100%,75%,0.15), hsla(210,60%,85%,0.1));
-  border: 1px solid hsla(264,100%,75%,0.25);
-  box-shadow: 0 8px 30px hsla(264,100%,70%,0.12);
+  background: linear-gradient(135deg, hsla(264,100%,75%,0.12), hsla(210,60%,85%,0.08));
+  border: 1.2px solid hsla(264,100%,75%,0.2);
+  box-shadow: 0 8px 32px hsla(264,100%,60%,0.12);
 }
 .landing-choice-friends:hover {
-  transform: translateY(-4px) scale(1.02);
-  box-shadow: 0 16px 40px hsla(264,100%,70%,0.22);
+  transform: translateY(-5px) scale(1.03);
+  background: linear-gradient(135deg, hsla(264,100%,75%,0.22), hsla(210,60%,85%,0.15));
+  border-color: hsla(264,100%,75%,0.5);
+  box-shadow: 0 20px 50px hsla(264,100%,60%,0.3);
 }
 .choice-icon { font-size: 1.6rem; }
 .choice-label { font-size: 1.05rem; font-weight: 600; color: var(--moon-text); }
@@ -1413,28 +1424,68 @@ textarea.form-input { resize: vertical; min-height: 100px; }
 .butterflies-pause { color: var(--moon-text-soft); font-size: 1rem; line-height: 1.7; margin-bottom: 0.6rem; }
 .butterflies-dots { color: var(--moon-accent1); font-size: 1.8rem; letter-spacing: 0.4em; }
 
-/* PARALLEL UNIVERSE */
-.parallel-section { padding: 3rem 0; }
-.parallel-card {
-  background: linear-gradient(145deg, hsla(240,43%,20%,0.7), hsla(264,100%,70%,0.06));
-  border: 1px solid hsla(264,100%,75%,0.18); border-radius: 24px;
-  padding: 2.5rem 2rem; text-align: center;
+/* PARALLEL UNIVERSE ΓÇö FLOATING VERSION */
+.parallel-section { padding: 4rem 0; overflow: hidden; position: relative; }
+.floating-memories-wrap {
+  display: flex; gap: 2rem; padding: 2rem 1rem;
+  overflow-x: auto; scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
 }
-.parallel-line {
-  font-family: var(--ff-display); font-style: italic;
-  font-size: clamp(1.3rem, 3.5vw, 2rem); color: var(--moon-text);
-  line-height: 1.45; margin-bottom: 2rem;
+.floating-memories-wrap::-webkit-scrollbar { display: none; }
+
+.memory-polaroid {
+  flex-shrink: 0; width: 140px; height: 180px;
+  background: white; padding: 0.6rem 0.6rem 2.5rem;
+  box-shadow: 0 15px 45px rgba(0,0,0,0.5);
+  border-radius: 4px;
+  transform: rotate(var(--rot, 0deg));
+  transition: all 0.5s var(--ease-expo);
+  cursor: grab;
 }
-.parallel-photos { display: flex; gap: 0.8rem; justify-content: center; flex-wrap: wrap; }
-.parallel-photo-wrap {
-  width: 100px; height: 130px; border-radius: 14px; overflow: hidden;
-  border: 1px solid hsla(264,100%,75%,0.2); box-shadow: 0 8px 24px rgba(0,0,0,0.35);
-  transform: rotate(-2deg); transition: transform 0.3s var(--ease-expo);
+.memory-polaroid:hover {
+  transform: rotate(0) translateY(-15px) scale(1.1);
+  z-index: 10;
+  box-shadow: 0 25px 60px rgba(0,0,0,0.7);
 }
-.parallel-photo-wrap:nth-child(2) { transform: rotate(1.5deg); }
-.parallel-photo-wrap:nth-child(3) { transform: rotate(-1deg); }
-.parallel-photo-wrap:hover { transform: rotate(0) scale(1.05); }
-.parallel-photo-wrap img { width: 100%; height: 100%; object-fit: cover; }
+.memory-polaroid img {
+  width: 100%; height: 100%; object-fit: cover;
+  border-radius: 2px;
+}
+
+/* TIMELINE */
+.intimacy-timeline {
+  display: flex; flex-direction: column; gap: 1.5rem;
+  max-width: 480px; margin: 3rem auto; padding: 0 1rem;
+  position: relative;
+}
+.timeline-mark {
+  display: flex; align-items: center; gap: 1.2rem;
+  padding: 1.2rem; background: hsla(240,43%,20%,0.4);
+  border: 1px solid hsla(264,100%,75%,0.15); border-radius: 20px;
+  backdrop-filter: blur(8px);
+}
+.timeline-mark-icon {
+  width: 40px; height: 40px; background: var(--moon-surface);
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-size: 1.1rem; border: 1px solid var(--moon-accent1);
+  box-shadow: 0 0 12px var(--moon-glow);
+}
+.timeline-mark-content h4 { font-family: var(--ff-display); color: var(--moon-text); margin-bottom: 0.2rem; }
+.timeline-mark-content p { font-size: 0.82rem; color: var(--moon-text-soft); }
+
+/* HEARTBEAT GLOW */
+.heart-monitor-card {
+  position: relative; overflow: hidden;
+  transition: box-shadow 0.6s var(--ease-expo);
+}
+.heart-monitor-card.high-bpm {
+  box-shadow: 0 0 80px hsla(350,90%,55%,0.35);
+  border-color: hsla(350,90%,60%,0.5);
+}
+.heart-status-msg {
+  font-family: var(--ff-script); font-size: 1.4rem;
+  color: var(--moon-accent1); min-height: 2em;
+}
 
 /* COMPLIMENTS */
 .compliments-section { padding: 3rem 0; }
@@ -1631,8 +1682,12 @@ html, body, #root {
 .landing-ticker-wrap {
   width: 100%;
   overflow: hidden;
-  margin: 1.2rem 0 1.8rem;
+  margin: 1.2rem 0 2.2rem;
   position: relative;
+  background: hsla(264, 40%, 10%, 0.4);
+  backdrop-filter: blur(8px);
+  border-top: 1px solid hsla(264, 100%, 75%, 0.1);
+  border-bottom: 1px solid hsla(264, 100%, 75%, 0.1);
 }
 .landing-ticker-wrap::before,
 .landing-ticker-wrap::after {

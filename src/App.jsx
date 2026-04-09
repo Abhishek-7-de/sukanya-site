@@ -442,17 +442,17 @@ function HeartbeatMonitor() {
   const msgIdx = Math.min(clicks, HEART_MSGS.length - 1);
 
   return (
-    <section className="heartbeat-section content">
+    <section className="heartbeat-section content" id="heartbeat">
       <span className="section-eyebrow" style={{ color: "var(--moon-accent1)" }}>Interactive</span>
       <h2 className="section-title" style={{ color: "var(--moon-text)", marginBottom: "2rem" }}>
         What happens to my heart
       </h2>
-      <div className="heart-monitor-card">
+      <div className={`heart-monitor-card ${bpm > 100 ? "high-bpm" : ""}`}>
         <canvas ref={canvasRef} className="ecg-canvas" />
         <div className="heart-display">
-          <div className={`heart-icon-big${pumping ? " pump" : ""}`}>❤️</div>
+          <div className={`heart-icon-big${pumping ? " pump" : ""}`} style={{ color: bpm > 110 ? "var(--blossom-coral)" : "inherit" }}>❤️</div>
           <div>
-            <div className="heart-bpm">{bpm}</div>
+            <div className="heart-bpm" style={{ color: bpm > 110 ? "var(--blossom-coral)" : "var(--moon-text)" }}>{bpm}</div>
             <div className="heart-bpm-label">bpm</div>
           </div>
         </div>
@@ -539,8 +539,56 @@ function FunWaterTracker() {
    NEUTRAL LANDING (HOME)
 ═══════════════════════════════════════════════ */
 function LandingPage({ onChoose }) {
+  const [fade, setFade] = useState(1);
+  const v1 = useRef();
+  const v2 = useRef();
+
+  useEffect(() => {
+    const vid1 = v1.current;
+    if (!vid1) return;
+
+    let rafId;
+    const check = () => {
+      const duration = vid1.duration;
+      if (duration > 0) {
+        const remaining = duration - vid1.currentTime;
+        if (remaining < 0.6) {
+          setFade(remaining / 0.6);
+        } else if (vid1.currentTime < 0.6) {
+          setFade(vid1.currentTime / 0.6);
+        } else {
+          setFade(1);
+        }
+        
+        if (remaining < 0.01) {
+          vid1.currentTime = 0;
+          vid1.play().catch(() => {});
+        }
+      }
+      rafId = requestAnimationFrame(check);
+    };
+    rafId = requestAnimationFrame(check);
+    return () => cancelAnimationFrame(rafId);
+  }, []);
+
   return (
-    <div className="w-landing world-fade-enter">
+    <div className="w-landing world-fade-enter" style={{ position: "relative", zIndex: 1, minHeight: "100vh" }}>
+      <div 
+        style={{
+          position: 'fixed',
+          top: 0, left: 0, width: '100%', height: '100%',
+          zIndex: -1, pointerEvents: 'none',
+          filter: "brightness(0.75) contrast(1.15)"
+        }}
+      >
+        <video
+          ref={v1}
+          autoPlay muted playsInline
+          style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: fade }}
+          src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260328_083109_283f3553-e28f-428b-a723-d639c617eb2b.mp4"
+        />
+        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, transparent, rgba(15, 10, 30, 0.9))' }} />
+      </div>
       <StarCanvas variant="moon" />
       <CursorTrail color="hsla(264,100%,75%,0.8)" />
 
@@ -770,26 +818,71 @@ function LovePage({ onBack, onNavigate }) {
         )}
       </section>
 
-      {/* PARALLEL UNIVERSE */}
+      {/* FLOATING MEMORIES — THE NEXT LEVEL PARALLEL */}
       <section className="parallel-section content">
         <motion.div
-          className="parallel-card"
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.7 }}
+          style={{ textAlign: "center", marginBottom: "2.5rem" }}
         >
-          <p className="parallel-line">
-            Maybe in a parallel universe — we are meant to be.
+          <span className="section-eyebrow">Parallel Realities</span>
+          <p className="parallel-line" style={{ display: "block", marginBottom: "3rem" }}>
+            Maybe in another world, we never had to say goodbye.
           </p>
-          <div className="parallel-photos">
-            {["/1.jpeg", "/2.jpeg", "/3.jpeg"].map((src, i) => (
-              <div key={i} className="parallel-photo-wrap">
-                <img src={src} alt="" onError={e => e.target.style.display = "none"} />
-              </div>
-            ))}
-          </div>
         </motion.div>
+        
+        <div className="floating-memories-wrap">
+          {[
+            { src: "/1.jpeg", rot: -5 },
+            { src: "/2.jpeg", rot: 3 },
+            { src: "/3.jpeg", rot: -2 },
+            { src: "/1.jpeg", rot: 6 },
+            { src: "/2.jpeg", rot: -4 }
+          ].map((m, i) => (
+            <motion.div
+              key={i}
+              className="memory-polaroid"
+              style={{ "--rot": `${m.rot}deg` }}
+              whileHover={{ scale: 1.15, rotate: 0 }}
+              drag dragConstraints={{ left: -50, right: 50, top: -50, bottom: 50 }}
+            >
+              <img src={m.src} alt="" onError={e => e.target.src = "https://images.unsplash.com/photo-1518893063132-36e46dbe2428?auto=format&fit=crop&q=80&w=200"} />
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      {/* INTIMACY TIMELINE */}
+      <section className="content" style={{ padding: "5rem 0" }}>
+        <div style={{ textAlign: "center", marginBottom: "3.5rem" }}>
+          <span className="section-eyebrow">Little Things</span>
+          <h2 className="section-title">The words that stayed</h2>
+        </div>
+        
+        <div className="intimacy-timeline">
+          {[
+            { icon: "✨", t: "The Listening", d: "How you actually hear what's not being said. It's rare." },
+            { icon: "💌", t: "The Gestures", d: "The way you notice small details that others miss." },
+            { icon: "🦋", t: "The Warmth", d: "A comfort that doesn't need to be explained in words." }
+          ].map((item, i) => (
+            <motion.div
+              key={i}
+              className="timeline-mark"
+              initial={{ opacity: 0, x: -25 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ delay: i * 0.25, duration: 0.6 }}
+              viewport={{ once: true }}
+              whileHover={{ scale: 1.02, backgroundColor: "hsla(240,43%,25%,0.6)" }}
+            >
+              <div className="timeline-mark-icon">{item.icon}</div>
+              <div className="timeline-mark-content">
+                <h4>{item.t}</h4>
+                <p>{item.d}</p>
+              </div>
+            </motion.div>
+          ))}
+        </div>
       </section>
 
       {/* COMPLIMENTS */}
