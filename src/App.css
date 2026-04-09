@@ -2328,26 +2328,60 @@ html, body, #root {
   100% { transform: translate(-50%, -50%) scale(2.5); opacity: 0; }
 }
 
-/* Shake Toast */
-.shake-toast {
+/* Dynamic Island Toast */
+.dynamic-island-toast {
   position: fixed;
-  top: 5rem;
-  left: 50%;
-  transform: translateX(-50%);
+  top: 3.5rem;
+  left: 0; right: 0;
+  margin: 0 auto;
+  width: max-content;
   z-index: 9999;
-  background: hsla(264, 80%, 15%, 0.92);
-  border: 1px solid hsla(264, 100%, 75%, 0.3);
+  background: #000;
   border-radius: 100px;
-  padding: 0.65rem 1.6rem;
-  color: var(--moon-accent1);
-  font-size: 0.9rem;
-  font-weight: 600;
-  font-family: var(--ff-mono);
-  letter-spacing: 0.06em;
-  backdrop-filter: blur(20px);
-  box-shadow: 0 8px 32px hsla(264, 100%, 60%, 0.3);
-  white-space: nowrap;
+  padding: 0.8rem 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 10px 40px hsla(264, 100%, 60%, 0.4), inset 0 0 0 1px hsla(264, 100%, 80%, 0.2);
   pointer-events: none;
+  overflow: hidden;
+}
+
+.dynamic-island-glow {
+  position: absolute;
+  top: -50%; left: -50%; width: 200%; height: 200%;
+  background: conic-gradient(from 0deg, transparent 0%, hsla(264, 100%, 65%, 0.5) 25%, transparent 50%);
+  animation: dynamic-spin 4s linear infinite;
+  z-index: -1;
+  filter: blur(15px);
+}
+
+@keyframes dynamic-spin {
+  100% { transform: rotate(360deg); }
+}
+
+.dynamic-island-text {
+  color: var(--moon-accent1);
+  font-size: 0.95rem;
+  font-weight: 700;
+  font-family: var(--ff-mono);
+  letter-spacing: 0.05em;
+  text-transform: lowercase;
+  position: relative;
+  z-index: 1;
+  text-shadow: 0 0 15px hsla(264, 100%, 75%, 0.8);
+}
+
+/* 3D Tilt for Mobile Buttons */
+.mobile-3d-tilt {
+  perspective: 1000px;
+}
+.btn-inner-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  pointer-events: none;
+  transition: transform 0.1s linear;
 }
 
 /* Shake Hint — shows only on mobile */

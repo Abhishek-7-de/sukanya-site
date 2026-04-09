@@ -760,34 +760,33 @@ function LandingPage({ onChoose }) {
       <StarCanvas variant="moon" />
       <CursorTrail color="hsla(264,100%,75%,0.8)" />
 
-      {/* Shake surprise toast */}
+      {/* Shake surprise toast — Dynamic Island style */}
       <AnimatePresence>
         {shakeMsg && (
-          <motion.div className="shake-toast"
-            initial={{ opacity: 0, y: -30, scale: 0.85 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -20, scale: 0.9 }}
-          >{shakeMsg}</motion.div>
+          <motion.div className="dynamic-island-toast"
+            initial={{ opacity: 0, y: -40, scale: 0.8, filter: "blur(10px)" }}
+            animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
+            exit={{ opacity: 0, y: -30, scale: 0.9, filter: "blur(5px)" }}
+            transition={{ type: "spring", stiffness: 300, damping: 20 }}
+          >
+            <div className="dynamic-island-glow" />
+            <span className="dynamic-island-text">{shakeMsg}</span>
+          </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Gyroscope-parallax floating elements */}
-      <motion.div className="floating-element" style={{ top: '15%', left: '10%' }}
-        animate={{ y: tilt.y * -22, x: tilt.x * 18 }}
-        transition={{ type: "spring", stiffness: 40, damping: 12 }}
-      >✨</motion.div>
-      <motion.div className="floating-element" style={{ top: '65%', left: '5%' }}
-        animate={{ y: tilt.y * 20, x: tilt.x * 10 }}
-        transition={{ type: "spring", stiffness: 25, damping: 8 }}
-      >🌸</motion.div>
-      <motion.div className="floating-element" style={{ top: '20%', right: '12%' }}
-        animate={{ y: tilt.y * -28, x: tilt.x * -18 }}
-        transition={{ type: "spring", stiffness: 30, damping: 9 }}
-      >💫</motion.div>
-      <motion.div className="floating-element" style={{ bottom: '18%', right: '10%' }}
-        animate={{ y: tilt.y * 15, x: tilt.x * -12 }}
-        transition={{ type: "spring", stiffness: 20, damping: 7 }}
-      >🦋</motion.div>
+      {/* Gyroscope-parallax + Continuous Floating elements combined! */}
+      <motion.div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none' }}
+        animate={{ x: tilt.x * 30, y: tilt.y * -30 }} transition={{ type: "spring", stiffness: 30, damping: 12 }}>
+        <motion.div className="floating-element" style={{ top: '15%', left: '10%' }}
+          animate={{ y: [0, -25, 0], rotate: [0, 15, 0] }} transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}>✨</motion.div>
+        <motion.div className="floating-element" style={{ top: '65%', left: '5%' }}
+          animate={{ y: [0, 35, 0], rotate: [0, -20, 0] }} transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 1 }}>🌸</motion.div>
+        <motion.div className="floating-element" style={{ top: '20%', right: '12%' }}
+          animate={{ y: [0, -30, 0], rotate: [0, -15, 0] }} transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}>💫</motion.div>
+        <motion.div className="floating-element" style={{ bottom: '18%', right: '10%' }}
+          animate={{ y: [0, 40, 0], rotate: [0, 25, 0] }} transition={{ duration: 9, repeat: Infinity, ease: "easeInOut", delay: 2 }}>🦋</motion.div>
+      </motion.div>
 
       {/* Shake hint — fades in after 3s, mobile only */}
       <motion.p className="shake-hint"
@@ -842,37 +841,45 @@ function LandingPage({ onChoose }) {
         >
           <Magnetic strength={0.4}>
             <motion.button
-              className="landing-choice-btn landing-choice-love ripple-btn"
+              className="landing-choice-btn landing-choice-love ripple-btn mobile-3d-tilt"
               variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
-              whileTap={{ scale: 0.96 }}
+              animate={{ rotateX: tilt.y * 15, rotateY: tilt.x * 15 }}
+              whileTap={{ scale: 0.94 }}
               onTouchStart={(e) => { addRipple1(e); haptic("light"); }}
               onMouseEnter={() => playSound("hover")}
-              onClick={() => { playSound("click"); haptic("medium"); onChoose("love"); }}
+              onClick={() => { playSound("click"); haptic("success"); onChoose("love"); }}
+              style={{ transformStyle: "preserve-3d" }}
             >
-              {ripples1.map(r => (
-                <span key={r.id} className="touch-ripple" style={{ left: `${r.x}%`, top: `${r.y}%` }} />
-              ))}
-              <span className="choice-icon">💌</span>
-              <span className="choice-label">The Personal Side</span>
-              <span className="choice-hint">A little honest, a little soft</span>
+              <div className="btn-inner-content" style={{ transform: "translateZ(20px)" }}>
+                {ripples1.map(r => (
+                  <span key={r.id} className="touch-ripple" style={{ left: `${r.x}%`, top: `${r.y}%` }} />
+                ))}
+                <span className="choice-icon">💌</span>
+                <span className="choice-label">The Personal Side</span>
+                <span className="choice-hint">A little honest, a little soft</span>
+              </div>
             </motion.button>
           </Magnetic>
 
           <Magnetic strength={0.4}>
             <motion.button
-              className="landing-choice-btn landing-choice-friends ripple-btn"
+              className="landing-choice-btn landing-choice-friends ripple-btn mobile-3d-tilt"
               variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
-              whileTap={{ scale: 0.96 }}
+              animate={{ rotateX: tilt.y * 15, rotateY: tilt.x * 15 }}
+              whileTap={{ scale: 0.94 }}
               onTouchStart={(e) => { addRipple2(e); haptic("light"); }}
               onMouseEnter={() => playSound("hover")}
-              onClick={() => { playSound("click"); haptic("medium"); onChoose("moon"); }}
+              onClick={() => { playSound("click"); haptic("success"); onChoose("moon"); }}
+              style={{ transformStyle: "preserve-3d" }}
             >
-              {ripples2.map(r => (
-                <span key={r.id} className="touch-ripple" style={{ left: `${r.x}%`, top: `${r.y}%` }} />
-              ))}
-              <span className="choice-icon">🌸</span>
-              <span className="choice-label">Her World</span>
-              <span className="choice-hint">Memories, vibes &amp; her people</span>
+              <div className="btn-inner-content" style={{ transform: "translateZ(20px)" }}>
+                {ripples2.map(r => (
+                  <span key={r.id} className="touch-ripple" style={{ left: `${r.x}%`, top: `${r.y}%` }} />
+                ))}
+                <span className="choice-icon">🌸</span>
+                <span className="choice-label">Her World</span>
+                <span className="choice-hint">Memories, vibes &amp; her people</span>
+              </div>
             </motion.button>
           </Magnetic>
         </motion.div>
