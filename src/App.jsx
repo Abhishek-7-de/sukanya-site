@@ -174,9 +174,86 @@ function Magnetic({ children, strength = 0.35 }) {
 }
 
 /* ═══════════════════════════════════════════════
+   BIOMETRIC HOLD-TO-UNLOCK COMPONENT
+═══════════════════════════════════════════════ */
+function BiometricScanner({ onSuccess, onCancel }) {
+  const [progress, setProgress] = useState(0);
+  const [isHolding, setIsHolding] = useState(false);
+  const requestRef = useRef();
+  const progressRef = useRef(0);
+
+  const startHold = useCallback((e) => {
+    e.preventDefault();
+    setIsHolding(true);
+    haptic("light");
+    playSound("click");
+    
+    // Animate progress up
+    const holdPulse = () => {
+      progressRef.current += 1.2; // roughly 1.5 seconds to unlock
+      setProgress(progressRef.current);
+      
+      // Heartbeat vibration every few ticks
+      if (Math.round(progressRef.current) % 30 === 0) haptic("heart");
+      
+      if (progressRef.current >= 100) {
+        haptic("success");
+        onSuccess();
+        return;
+      }
+      requestRef.current = requestAnimationFrame(holdPulse);
+    };
+    requestRef.current = requestAnimationFrame(holdPulse);
+  }, [onSuccess]);
+
+  const endHold = useCallback((e) => {
+    if (e) e.preventDefault();
+    setIsHolding(false);
+    cancelAnimationFrame(requestRef.current);
+    
+    // Animate progress back down quickly
+    const releasePulse = () => {
+      progressRef.current -= 5;
+      if (progressRef.current <= 0) {
+        progressRef.current = 0;
+        setProgress(0);
+        return;
+      }
+      setProgress(progressRef.current);
+      requestRef.current = requestAnimationFrame(releasePulse);
+    };
+    requestRef.current = requestAnimationFrame(releasePulse);
+  }, []);
+
+  return (
+    <div className="biometric-container">
+      <div 
+        className={`biometric-orb ${isHolding ? 'holding' : ''}`}
+        onTouchStart={startHold}
+        onTouchEnd={endHold}
+        onMouseDown={startHold}
+        onMouseUp={endHold}
+        onMouseLeave={endHold}
+      >
+        <div className="biometric-ring" style={{ '--progress': `${progress}%` }} />
+        <div className="biometric-fingerprint">👆</div>
+      </div>
+      <p className="biometric-instruction">
+        {progress > 0 ? `${Math.floor(progress)}% synchronized...` : "Press and hold"}
+      </p>
+      <button className="love-warning-back" onClick={onCancel} style={{marginTop: '1rem'}}>
+        ← Go back
+      </button>
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════
    OPENING LETTER POPUP
 ═══════════════════════════════════════════════ */
 function OpeningLetter({ onClose }) {
+  const [isOpen, setIsOpen] = useState(false);
+
   return (
     <AnimatePresence>
       <motion.div
@@ -184,36 +261,51 @@ function OpeningLetter({ onClose }) {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        onClick={onClose}
+        onClick={isOpen ? onClose : () => setIsOpen(true)}
       >
-        <motion.div
-          className="letter-modal"
-          initial={{ opacity: 0, y: 60, scale: 0.92 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, y: 40, scale: 0.95 }}
-          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-          onClick={e => e.stopPropagation()}
-        >
-          <div className="letter-top-deco">✉️</div>
-          <p className="letter-text">
-            Hey — Ik it's kinda cliche but well, I am like that.
-          </p>
-          <p className="letter-text">
-            Sorry if you find this creepy but that wasn't my intention at all..
-          </p>
-          <p className="letter-text">
-            You'll be leaving the city in a month and probably we'll stay in touch but you know, maybe not so much — we'll have our own different lives to carry on.
-          </p>
-          <p className="letter-text">
-            So this will be a small memory whenever we look back. And well, maybe not everyone comes into your life to stay — but definitely, as long as they are there, they make life feel like living and being happy.
-          </p>
-          <p className="letter-text" style={{ fontStyle: "italic", opacity: 0.75 }}>
-            So ya !! 🌸
-          </p>
-          <button className="letter-close-btn" onClick={() => { playSound("click"); onClose(); }}>
-            Step inside ✨
-          </button>
-        </motion.div>
+        {!isOpen ? (
+          <motion.div 
+            className="envelope"
+            initial={{ y: 50, scale: 0.8, opacity: 0, rotate: -5 }}
+            animate={{ y: 0, scale: 1, opacity: 1, rotate: 0 }}
+            whileHover={{ scale: 1.05, rotate: 2 }}
+            transition={{ type: "spring", damping: 15 }}
+            onClick={(e) => { e.stopPropagation(); setIsOpen(true); playSound("open"); haptic("medium"); }}
+          >
+            <div className="envelope-flap" />
+            <div className="envelope-seal">💌</div>
+            <p className="envelope-hint">Click to open your letter</p>
+          </motion.div>
+        ) : (
+          <motion.div
+            className="letter-modal"
+            initial={{ opacity: 0, y: 100, scale: 0.8, rotate: 5 }}
+            animate={{ opacity: 1, y: 0, scale: 1, rotate: 0 }}
+            exit={{ opacity: 0, y: 40, scale: 0.95 }}
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="letter-top-deco">🕊️</div>
+            <p className="letter-text">
+              Hey — Ik it's kinda cliche but well, I am like that.
+            </p>
+            <p className="letter-text">
+              Sorry if you find this creepy but that wasn't my intention at all..
+            </p>
+            <p className="letter-text">
+              You'll be leaving the city in a month and probably we'll stay in touch but you know, maybe not so much — we'll have our own different lives to carry on.
+            </p>
+            <p className="letter-text">
+              So this will be a small memory whenever we look back. And well, maybe not everyone comes into your life to stay — but definitely, as long as they are there, they make life feel like living and being happy.
+            </p>
+            <p className="letter-text" style={{ fontStyle: "italic", opacity: 0.75 }}>
+              So ya !! 🌸
+            </p>
+            <button className="letter-close-btn" onClick={() => { playSound("click"); onClose(); }}>
+              Step inside ✨
+            </button>
+          </motion.div>
+        )}
       </motion.div>
     </AnimatePresence>
   );
@@ -296,6 +388,39 @@ function SecretVault({ onClose }) {
 /* ═══════════════════════════════════════════════
    GLOBAL SOS BUTTON
 ═══════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════
+   MAGIC BURST (PARTICLE ENGINE)
+═══════════════════════════════════════════════ */
+function MagicBurst({ x, y, onComplete }) {
+  useEffect(() => {
+    const timer = setTimeout(onComplete, 1500);
+    return () => clearTimeout(timer);
+  }, [onComplete]);
+
+  return (
+    <div className="magic-burst-wrap" style={{ left: x, top: y }}>
+      {Array.from({ length: 15 }).map((_, i) => (
+        <motion.div
+          key={i}
+          className="magic-particle"
+          initial={{ scale: 0, x: 0, y: 0, opacity: 1 }}
+          animate={{ 
+            scale: [0, 1.5, 0], 
+            x: (Math.random() - 0.5) * 200, 
+            y: (Math.random() - 0.5) * 200,
+            opacity: [1, 1, 0] 
+          }}
+          transition={{ duration: 1 + Math.random(), ease: "easeOut" }}
+          style={{
+            background: `hsl(${260 + Math.random() * 100}, 100%, 75%)`,
+            boxShadow: `0 0 10px hsl(${260 + Math.random() * 100}, 100%, 80%)`
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
 function GlobalSOS() {
   return (
     <a href="tel:7001684412" className="global-sos" title="Call anytime — SOS 7001684412"
@@ -696,6 +821,7 @@ function LandingPage({ onChoose }) {
   const [shakeMsg, setShakeMsg] = useState(null);
   const [ripples1, addRipple1] = useTouchRipple();
   const [ripples2, addRipple2] = useTouchRipple();
+  const [bursts, setBursts] = useState([]);
   const tilt = useDeviceTilt();
 
   const SHAKE_MSGS = [
@@ -706,6 +832,15 @@ function LandingPage({ onChoose }) {
   const onShake = useCallback(() => {
     haptic("double");
     setShakeMsg(SHAKE_MSGS[Math.floor(Math.random() * SHAKE_MSGS.length)]);
+    
+    // Add multiple bursts at random positions
+    const newBursts = Array.from({ length: 3 }).map(() => ({
+      id: Math.random(),
+      x: `${20 + Math.random() * 60}%`,
+      y: `${20 + Math.random() * 60}%`
+    }));
+    setBursts(prev => [...prev, ...newBursts]);
+    
     setTimeout(() => setShakeMsg(null), 2200);
   }, []);
 
@@ -759,6 +894,14 @@ function LandingPage({ onChoose }) {
       </div>
       <StarCanvas variant="moon" />
       <CursorTrail color="hsla(264,100%,75%,0.8)" />
+
+      {bursts.map(b => (
+        <MagicBurst 
+          key={b.id} 
+          x={b.x} y={b.y} 
+          onComplete={() => setBursts(prev => prev.filter(x => x.id !== b.id))} 
+        />
+      ))}
 
       {/* Shake surprise toast — Dynamic Island style */}
       <AnimatePresence>
@@ -823,7 +966,7 @@ function LandingPage({ onChoose }) {
 
         <div className="landing-ticker-wrap">
           <div className="landing-ticker">
-            {"✨ made for you · 💌 honest & soft · 🌸 something small · 💫 just for you · 🦋 butterflies · 🌙 late night energy · ".repeat(6)}
+            {"✨ made for you · 💌 honest & soft · 🌸 something small · 💫 just for you · 🦋 butterflies ·🌙 late night energy · ".repeat(6)}
           </div>
         </div>
 
@@ -893,10 +1036,9 @@ function LandingPage({ onChoose }) {
 ═══════════════════════════════════════════════ */
 function LovePage({ onBack, onNavigate }) {
   const [step, setStep] = useState("warning"); // warning | password | content
-  const [pw, setPw] = useState("");
-  const [pwError, setPwError] = useState(false);
   const [butterfliesRevealed, setButterfliesRevealed] = useState(false);
   const [showCompliment, setShowCompliment] = useState(null);
+  const tilt = useDeviceTilt();
   
   // Easter Egg Logic
   const [logoClicks, setLogoClicks] = useState(0);
@@ -924,27 +1066,20 @@ function LovePage({ onBack, onNavigate }) {
     "You're not just pretty by looks. By words. By gestures. By actions. All of it. 💕",
   ];
 
-  const tryPassword = () => {
-    if (pw === "4412") {
-      playSound("success");
-      setStep("content");
-      setPwError(false);
-    } else {
-      setPwError(true);
-      playSound("click");
-      setTimeout(() => setPwError(false), 1200);
-    }
-  };
-
   if (step === "warning") {
     return (
       <div className="love-gate world-fade-enter">
         <StarCanvas variant="moon" />
         <motion.div
-          className="love-warning-box"
+          className="love-warning-box glass-premium"
           initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
+          animate={{ 
+            opacity: 1, scale: 1,
+            rotateX: tilt.y * 8, 
+            rotateY: tilt.x * -8 
+          }}
           transition={{ duration: 0.5 }}
+          style={{ transformStyle: "preserve-3d" }}
         >
           <div className="love-warning-icon">⚠️</div>
           <h2 className="love-warning-title">Hold on a second</h2>
@@ -972,35 +1107,22 @@ function LovePage({ onBack, onNavigate }) {
       <div className="love-gate world-fade-enter">
         <StarCanvas variant="moon" />
         <motion.div
-          className="love-warning-box"
+          className="love-warning-box glass-premium"
           initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
+          animate={{ 
+            opacity: 1, y: 0,
+            rotateX: tilt.y * 10, 
+            rotateY: tilt.x * -10 
+          }}
           transition={{ duration: 0.5 }}
+          style={{ transformStyle: "preserve-3d" }}
         >
           <div className="love-warning-icon">🔒</div>
           <h2 className="love-warning-title">One small thing</h2>
           <p className="love-warning-text">
-            You know the password. It's yours. 💌
+            Just to make sure it's really you. Hold your finger down to sync. 💌
           </p>
-          <input
-            className={`love-pw-input${pwError ? " shake" : ""}`}
-            type="password"
-            placeholder="Enter password..."
-            value={pw}
-            onChange={e => setPw(e.target.value)}
-            onKeyDown={e => e.key === "Enter" && tryPassword()}
-            maxLength={10}
-            autoFocus
-          />
-          {pwError && <p className="love-pw-error">That's not it 🌸 think again...</p>}
-          <div className="love-warning-btns">
-            <button className="love-warning-proceed" onClick={tryPassword}>
-              Enter →
-            </button>
-            <button className="love-warning-back" onClick={() => { playSound("click"); setStep("warning"); }}>
-              ← Go back
-            </button>
-          </div>
+          <BiometricScanner onSuccess={() => { playSound("success"); setStep("content"); }} onCancel={onBack} />
         </motion.div>
       </div>
     );
