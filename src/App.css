@@ -2293,7 +2293,6 @@ html, body, #root {
   animation-delay: 2.2s;
   font-size: 0.65rem;
 }
-}
 
 @keyframes flutter {
   0% { transform: translate(0, 0) scale(0.8) rotate(-15deg); opacity: 0; filter: blur(2px); }
