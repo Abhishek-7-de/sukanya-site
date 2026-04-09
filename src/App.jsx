@@ -137,6 +137,40 @@ function VolumeToast() {
       initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}
     >
       🔊 Turn your volume on ✨
+  );
+}
+
+/* ═══════════════════════════════════════════════
+   SECRET VAULT (EASTER EGG)
+═══════════════════════════════════════════════ */
+function SecretVault({ onClose }) {
+  return (
+    <motion.div
+      className="vault-overlay"
+      initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+    >
+      <motion.div
+        className="vault-modal"
+        initial={{ scale: 0.8, opacity: 0, y: 30 }}
+        animate={{ scale: 1, opacity: 1, y: 0 }}
+        exit={{ scale: 0.8, opacity: 0, y: 30 }}
+        transition={{ type: "spring", damping: 20 }}
+      >
+        <button className="vault-close" onClick={() => { playSound("click"); onClose(); }}>✕</button>
+        <h3 style={{ fontFamily: "var(--ff-display)", fontSize: "1.8rem", color: "var(--moon-accent1)", marginBottom: "1rem" }}>
+          Midnight Vault 🌙
+        </h3>
+        <p style={{ color: "var(--moon-text)", marginBottom: "1.5rem", lineHeight: "1.6" }}>
+          You tapped 5 times. You broke the simulation.<br/>
+          This is a secret space. Just for us.
+        </p>
+        <div className="vault-secret" style={{ padding: "1.5rem", background: "rgba(0,0,0,0.4)", borderRadius: "12px", border: "1px dashed var(--moon-accent1)", fontStyle: "italic", color: "var(--moon-text-soft)" }}>
+          "Some people you just don't forget. No matter the distance, no matter the silence, their frequency stays with you."
+        </div>
+        <p className="vault-sub" style={{ marginTop: "1.5rem", fontSize: "0.8rem", color: "gray", letterSpacing: "0.1em", textTransform: "uppercase" }}>
+          Keep this hidden.
+        </p>
+      </motion.div>
     </motion.div>
   );
 }
@@ -664,6 +698,22 @@ function LovePage({ onBack, onNavigate }) {
   const [pwError, setPwError] = useState(false);
   const [butterfliesRevealed, setButterfliesRevealed] = useState(false);
   const [showCompliment, setShowCompliment] = useState(null);
+  
+  // Easter Egg Logic
+  const [logoClicks, setLogoClicks] = useState(0);
+  const [vaultOpen, setVaultOpen] = useState(false);
+
+  const handleLogoClick = () => {
+    const newClicks = logoClicks + 1;
+    setLogoClicks(newClicks);
+    if (newClicks >= 5) {
+      playSound("open");
+      setVaultOpen(true);
+      setLogoClicks(0);
+    } else {
+      playSound("click");
+    }
+  };
 
   const COMPLIMENTS = [
     "You make ordinary moments feel like poetry 🌸",
@@ -764,7 +814,7 @@ function LovePage({ onBack, onNavigate }) {
       <StarCanvas variant="moon" />
 
       <nav className="moon-nav content">
-        <div className="moon-logo">💌 For You</div>
+        <div className="moon-logo" onClick={handleLogoClick} style={{ cursor: "pointer", userSelect: "none" }}>💌 For You</div>
         <button className="back-btn" onClick={() => { playSound("click"); onBack(); }}>← Back</button>
       </nav>
 
@@ -948,6 +998,11 @@ function LovePage({ onBack, onNavigate }) {
           See Her World →
         </button>
       </div>
+
+      {/* EASTER EGG RENDER */}
+      <AnimatePresence>
+        {vaultOpen && <SecretVault onClose={() => setVaultOpen(false)} />}
+      </AnimatePresence>
     </div>
   );
 }
@@ -1510,6 +1565,7 @@ export default function App() {
   const [world, setWorld] = useState("landing");
   const [showLetter, setShowLetter] = useState(true);
   const [showGuide, setShowGuide] = useState(false);
+  const spotlightRef = useRef(null);
 
   useEffect(() => {
     const lenis = new Lenis({
@@ -1530,13 +1586,23 @@ export default function App() {
     }
     requestAnimationFrame(raf);
 
+    const handleMove = (e) => {
+      if (spotlightRef.current) {
+        spotlightRef.current.style.background = `radial-gradient(600px circle at ${e.clientX}px ${e.clientY}px, rgba(255,255,255,0.06), transparent 40%)`;
+      }
+    };
+    window.addEventListener("mousemove", handleMove);
+
     return () => {
       lenis.destroy();
+      window.removeEventListener("mousemove", handleMove);
     };
   }, []);
 
   return (
     <>
+      <div className="film-grain" />
+      <div className="spotlight-cursor" ref={spotlightRef} />
       {/* OPENING LETTER — shows once on load */}
       <AnimatePresence>
         {showLetter && <OpeningLetter onClose={() => setShowLetter(false)} />}
